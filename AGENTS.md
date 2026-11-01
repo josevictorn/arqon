@@ -18,7 +18,7 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 
 ## Hierarquia de verdade (em caso de conflito)
 
-`ADR Aceito` > `docs/modules/<ctx>/spec.md` > `docs/architecture/*` > código existente > seu conhecimento prévio.
+`ADR Aceito` > `docs/modules/<ctx>/spec.md` & `prd.md` > `docs/architecture/*` > código existente > seu conhecimento prévio.
 
 ## Regras inegociáveis
 
@@ -57,7 +57,7 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 | Fluxo de trabalho, DoD, checklist de review | [docs/workflow.md](./docs/workflow.md) |
 | Mapa de toda a documentação | [docs/README.md](./docs/README.md) |
 | Decisões e o porquê | [docs/decisions/](./docs/decisions/README.md) |
-| Regras de negócio de um módulo | `docs/modules/<ctx>/spec.md` |
+| Requisitos de produto e regras de negócio de um módulo | `docs/modules/<ctx>/prd.md` e `docs/modules/<ctx>/spec.md` |
 | Lista de eventos (tópicos, produtores, consumidores) | [docs/events/catalog.md](./docs/events/catalog.md) |
 | Vocabulário do domínio | [docs/glossary.md](./docs/glossary.md) |
 | Receitas (criar módulo, command, projector...) | [.agents/skills/](./.agents/skills/README.md) |
