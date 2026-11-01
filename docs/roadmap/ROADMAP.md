@@ -34,8 +34,8 @@ flowchart LR
 | T0.01 | Estrutura de docs, AGENTS.md, ADRs iniciais, roadmap, specs, skills de workflow | — | 0001, 0002 | ✅ |
 | T0.02 | **(Humano)** Decidir ADRs iniciais (0003 a 0011 todos ✅ Aceitos) | T0.01 | 0003–0011 | ✅ |
 | T0.03 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `iam` + ADRs de IDs (0014) e JWT (0015) | T0.02 | 0014, 0015 | ✅ |
-| T0.04 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `tenancy` + ADRs de Tenant ativo e RLS | T0.03 | pergunta "tenant ativo", pergunta "RLS" | 🔄 |
-| T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento | T0.04 | pergunta "evento pagamento" | ☐ |
+| T0.04 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `tenancy` + ADRs de Tenant ativo (0016) e RLS (0017) | T0.03 | 0016, 0017 | ✅ |
+| T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento | T0.04 | pergunta "evento pagamento" | 🔄 |
 | T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | ☐ |
 | T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope de Integration Event e Schema Registry | T0.06 | pergunta "envelope", pergunta "formato" | ☐ |
 
@@ -77,7 +77,7 @@ flowchart LR
 | T3.02 | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (RFC 7807), mapeamento `Either` → HTTP | T3.01 | 0013 | ☐ |
 | T3.03 | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves | T3.02 | — | ☐ |
 | T3.04 | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02 | 0003 | ☐ |
-| T3.05 | `PrismaModule` + schema `OutboxEvent` + `PrismaUnitOfWork` (ALS) | T3.01 | 0007, 0009 | ☐ |
+| T3.05 | `PrismaModule` + schema `OutboxEvent` + `PrismaUnitOfWork` (ALS + propagação de `app.current_tenant_id` para RLS) | T3.01 | 0007, 0009, 0017 | ☐ |
 | T3.06 | `MongoReadModule` + `MongoReadService` + registro/sincronização de índices de views | T3.01 | — | ☐ |
 | T3.07 | `RedisModule` + `CacheGateway` adapter + `DistributedLockService` | T3.01 | — | ☐ |
 | T3.08 | Observabilidade: `nestjs-pino` (Canonical Log Lines, `LogContextPort`, redact, sampling) + OTel `instrumentation.ts` + `/metrics` + `/health/ready` | T3.05–T3.07 | 0006, 0013 | ☐ |
@@ -109,7 +109,7 @@ flowchart LR
 | T5.03 | `NodemailerAdapter` (Mailpit) + templates i18n + `FakeMail` | T3.10, T3.03 | 0005 | ☐ |
 | T5.04 | Payment: contrato + factory + Stripe adapter + ACL + `FakePaymentGateway` | T3.10 | 0005 | ☐ |
 | T5.05 | Asaas adapter + ACL + resolução explícita do provedor na Factory | T5.04 | 0005 | ☐ |
-| T5.06 | Auth infra: JWT guard, `@CurrentUser`, `@CurrentTenant`, `TenantAbilityFactory`, `PoliciesGuard` | T5.01, T3.07 | pergunta "tenant ativo" | ☐ |
+| T5.06 | Auth infra: JWT guard, `@CurrentUser`, `@CurrentTenant` (`:orgId` / `X-Organization-Id`), `TenantAbilityFactory`, `PoliciesGuard` | T5.01, T3.07 | 0015, 0016 | ☐ |
 
 ## F6 — Módulo `iam` (módulo de referência)
 
@@ -144,18 +144,18 @@ Spec: [billing](../modules/billing/spec.md). **Primeiro módulo construído com 
 
 ## F8 — Módulo `tenancy`
 
-Spec: [tenancy](../modules/tenancy/spec.md).
+PRD: [tenancy/prd.md](../modules/tenancy/prd.md) · Spec: [tenancy/spec.md](../modules/tenancy/spec.md).
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T8.01 | Domínio: `Organization`, `Slug`, `Membership`, `WatchedList`, `Role`, `PermissionRule`, `RoleDomainFactory` + invariantes | F7 | pergunta "RLS" | ☐ |
-| T8.02 | `CreateOrganizationCommand` | T8.01 | — | ☐ |
-| T8.03 | Cargos customizados (create/update/delete) + invalidação de cache | T8.02 | — | ☐ |
-| T8.04 | `AssignRolesToMember` + `TransferOwnership` | T8.02 | — | ☐ |
-| T8.05 | `InviteMember` (BillingFacade) + `AcceptInvite` (UoW) + `CancelInvite` | T8.02, T7.07 | — | ☐ |
-| T8.06 | CASL ponta a ponta: hidratação Redis, guard nível 1, `subject()` nível 2, testes de vazamento cross-tenant | T8.03, T5.06 | — | ☐ |
-| T8.07 | `OrganizationMembersProjector` + `OrganizationRolesProjector` + queries | T8.02 | 0008 | ☐ |
-| T8.08 | `TenancyFacade` | T8.02 | — | ☐ |
+| T8.01 | Domínio: `Organization`, `Slug`, `Membership`, `OrganizationMemberList` (`WatchedList`), `Role`, `PermissionRule`, `Invite`, `RoleDomainFactory` (Owner + Member) + invariantes + RLS migrations | F7 | 0014, 0017 | ☐ |
+| T8.02 | `CreateOrganization` + `UpdateOrganization` (`requireMfa`) + `DeleteOrganization` | T8.01 | 0016, 0017 | ☐ |
+| T8.03 | Cargos customizados (`CreateCustomRole`, `UpdateRolePermissions`, `DeleteCustomRole` com bloqueio de cargo em uso) + invalidação de cache Redis | T8.02 | — | ☐ |
+| T8.04 | Membros: `AssignRolesToMember` + `TransferOwnership` + `RemoveMember` + `LeaveOrganization` + `OnUserAnonymizedSubscriber` | T8.02 | 0008 | ☐ |
+| T8.05 | Convites: `InviteMember` (`BillingFacade`) + `ResendInvite` + `CancelInvite` (CASL Nível 2) + `AcceptInvite` (`UnitOfWork`) + `GetInvitePreviewByToken` | T8.02, T7.07 | — | ☐ |
+| T8.06 | CASL + RLS ponta a ponta: hidratação Redis, guard Nível 1 (`requireMfa`), `subject()` Nível 2, suíte de testes de tentativa de vazamento cross-tenant | T8.03, T5.06 | 0016, 0017 | ☐ |
+| T8.07 | `OrganizationMembersProjector` + `OrganizationRolesProjector` + queries (`ListMyOrganizations`, `GetOrganizationDetails`, `FetchOrganizationMembers`, `FetchOrganizationRoles`) | T8.02 | 0008 | ☐ |
+| T8.08 | `TenancyFacade` (`getMemberAuthorizationContext`, `getOrganizationSummary`, `getOrganizationsWhereUserIsSoleOwner`, `getOrganizationOwnerUserIds`) | T8.02 | — | ☐ |
 
 ## F9 — Módulo `notifications`
 
