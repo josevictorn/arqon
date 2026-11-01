@@ -7,7 +7,9 @@ Termos do domínio e da arquitetura. Use **exatamente** estes nomes no código (
 | Termo (código) | PT-BR | Definição | Módulo |
 |---|---|---|---|
 | `User` | Usuário | Pessoa com credenciais na plataforma; existe independentemente de organizações | iam |
-| `Session` | Sessão | Login ativo de um usuário num dispositivo, com refresh token rotativo | iam |
+| `Session` | Sessão | Login ativo de um usuário num dispositivo, com refresh token rotativo e flag `mfaVerified` | iam |
+| `MFA` (`TOTP` / `Email OTP`) | Múltiplos Fatores | Segundo fator de autenticação via aplicativo autenticador (RFC 6238) ou código temporário por e-mail | iam |
+| `Grace Period` (`PENDING_DELETION`) | Janela de Arrependimento | Período de 15 dias após o pedido de exclusão em que a conta fica desativada mas pode ser restaurada antes da anonimização definitiva | iam |
 | `Organization` | Organização / Tenant | Unidade de isolamento de dados e cobrança; dona de membros, cargos e assinatura | tenancy |
 | `Tenant` | Tenant | Sinônimo técnico de `Organization` no contexto de isolamento (`tenantId` = `organizationId`) | — |
 | `Membership` | Vínculo / Membro | Relação `User` ↔ `Organization` com 1+ cargos | tenancy |

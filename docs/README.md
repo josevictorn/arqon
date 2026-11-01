@@ -7,7 +7,8 @@
 | [`workflow.md`](./workflow.md) | Como as tasks são executadas, revisadas e encerradas? | Humano |
 | [`architecture/`](./architecture/) | Como cada parte técnica funciona (CQRS, eventos, CASL...)? | IA (sob demanda) + Humano |
 | [`decisions/`](./decisions/README.md) | **Por que** foi decidido assim? O que ainda está em aberto? | **Humano** + IA |
-| [`modules/<ctx>/spec.md`](./modules/) | O que o módulo faz? Quais invariantes, commands, queries e eventos? | Humano + IA |
+| [`modules/<ctx>/prd.md`](./modules/) | **Produto & Negócio:** jornadas do usuário, requisitos funcionais, referências de mercado e casos de borda | **Humano** + IA |
+| [`modules/<ctx>/spec.md`](./modules/) | **Engenharia & DDD:** agregados, invariantes, commands, queries, eventos, schemas e endpoints | Humano + IA |
 | [`events/catalog.md`](./events/catalog.md) | Quais eventos existem, quem produz e quem consome? | Humano + IA |
 | [`glossary.md`](./glossary.md) | O que significa cada termo do domínio? | Humano + IA |
 | [`roadmap/`](./roadmap/ROADMAP.md) | O que falta fazer, em que ordem, e qual o status? | Humano + IA |

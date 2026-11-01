@@ -23,6 +23,8 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0011](./0011-infraestrutura-local.md) | Infraestrutura local: Docker Compose com profiles (`core`, `messaging`, `mail-storage`, `observability`, `full`) | ✅ Aceito | — | 2026-10-31 |
 | [0012](./0012-inicializacao-de-novos-projetos.md) | Inicialização de novos projetos (`create-arqon-app` + `pnpm init:project`) | ✅ Aceito | — | 2026-11-01 |
 | [0013](./0013-estrategia-de-logging-canonical-logs-e-custo.md) | Estratégia de logging: Canonical Log Lines (Wide Events), taxonomia e controle de custo | ✅ Aceito | — | 2026-11-01 |
+| [0014](./0014-identificadores-uuidv7.md) | Padronizar identificadores com UUIDv7 gerados no domínio (`UniqueEntityID`) | ✅ Aceito | — | 2026-11-01 |
+| [0015](./0015-jwt-assimetrico-eddsa-ed25519.md) | Assinatura de JWT assimétrica com EdDSA (Ed25519) via `jose` e Refresh Token Rotation | ✅ Aceito | — | 2026-11-01 |
 
 Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 
@@ -30,10 +32,8 @@ Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 
 | Tema | Pergunta | Quando decidir |
 |---|---|---|
-| IDs de entidades | UUIDv7 para tudo (entidades + eventos)? Gerado no domínio ou no banco? | Antes de T2.02 |
 | Formato no Schema Registry | JSON Schema, Avro ou Protobuf? (Recomendação: JSON Schema, gerado a partir de Zod) | Antes de T4.02 |
 | Envelope de Integration Event | Campos obrigatórios e headers Kafka | Antes de T2.05 |
-| Algoritmo JWT | RS256 ou EdDSA (Ed25519)? Rotação de chaves / JWKS? | Antes de T5.01 |
 | Isolamento multi-tenant no Postgres | Só `organizationId` na aplicação ou também Row-Level Security? | Antes de T8.01 |
 | Tenant ativo | `activeTenantId` no JWT (exige reemitir token ao trocar de org) ou header `X-Organization-Id` validado por request? | Antes de T5.06 |
 | Nome do evento de pagamento | O blueprint usa `billing.invoice.paid.v1` (§5.2) **e** `billing.subscription.paid.v1` (§12). Qual (ou ambos)? | Antes de T7.05 |

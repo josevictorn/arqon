@@ -27,12 +27,17 @@ flowchart LR
 
 ## F0 — Documentação e decisões
 
-**Saída da fase:** estrutura de docs criada; ADRs que bloqueiam a F1 decididos.
+**Saída da fase:** estrutura de docs criada; ADRs que bloqueiam a F1 decididos; PRDs e specs completas dos 5 módulos fechados.
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
 | T0.01 | Estrutura de docs, AGENTS.md, ADRs iniciais, roadmap, specs, skills de workflow | — | 0001, 0002 | ✅ |
 | T0.02 | **(Humano)** Decidir ADRs iniciais (0003 a 0011 todos ✅ Aceitos) | T0.01 | 0003–0011 | ✅ |
+| T0.03 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `iam` + ADRs de IDs (0014) e JWT (0015) | T0.02 | 0014, 0015 | ✅ |
+| T0.04 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `tenancy` + ADRs de Tenant ativo e RLS | T0.03 | pergunta "tenant ativo", pergunta "RLS" | 🔄 |
+| T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento | T0.04 | pergunta "evento pagamento" | ☐ |
+| T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | ☐ |
+| T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope de Integration Event e Schema Registry | T0.06 | pergunta "envelope", pergunta "formato" | ☐ |
 
 ## F1 — Fundação e tooling
 
@@ -57,7 +62,7 @@ flowchart LR
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
 | T2.01 | `Either` (left/right + helpers) + `DomainError` + `common-errors` | F1 | — | ☐ |
-| T2.02 | `UniqueEntityID` (UUIDv7?) + `Entity` + `ValueObject` | T2.01 | pergunta "IDs" | ☐ |
+| T2.02 | `UniqueEntityID` (UUIDv7) + `Entity` + `ValueObject` | T2.01 | 0014 | ☐ |
 | T2.03 | `AggregateRoot` + `DomainEvent` + registro/dispatch de domain events | T2.02 | 0009 | ☐ |
 | T2.04 | `WatchedList` | T2.02 | — | ☐ |
 | T2.05 | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (schema Zod + tipo) | T2.03 | 0008, pergunta "envelope" | ☐ |
@@ -99,7 +104,7 @@ flowchart LR
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T5.01 | `Argon2Hasher` + `JwtEncrypter` (chaves assimétricas) | F3 | pergunta "JWT" | ☐ |
+| T5.01 | `Argon2Hasher` + `JwtEncrypter` (`EdDSA`/`Ed25519` via `jose`) + `AesGcmCipher` (MFA) | F3 | 0015 | ☐ |
 | T5.02 | `S3StorageAdapter` (MinIO) + presigned URLs + `FakeStorage` | T3.10 | 0005 | ☐ |
 | T5.03 | `NodemailerAdapter` (Mailpit) + templates i18n + `FakeMail` | T3.10, T3.03 | 0005 | ☐ |
 | T5.04 | Payment: contrato + factory + Stripe adapter + ACL + `FakePaymentGateway` | T3.10 | 0005 | ☐ |
@@ -108,18 +113,20 @@ flowchart LR
 
 ## F6 — Módulo `iam` (módulo de referência)
 
-**Saída da fase:** iam completo com testes nos 3 níveis; **skills e geradores extraídos e validados**. Spec: [iam](../modules/iam/spec.md).
+**Saída da fase:** iam completo com testes nos 3 níveis; **skills e geradores extraídos e validados**. PRD: [iam/prd.md](../modules/iam/prd.md) · Spec: [iam/spec.md](../modules/iam/spec.md).
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T6.01 | Domínio: `User`, `Session`, `Email`, `Password`, erros + unit | F4, F5 | — | ☐ |
-| T6.02 | `RegisterUserCommand` ponta a ponta (repo Prisma + mapper + controller + e2e) | T6.01 | 0009 | ☐ |
-| T6.03 | `AuthenticateWithPassword` + `RefreshSessionToken` (rotação, reuso) | T6.02 | — | ☐ |
-| T6.04 | `RequestPasswordReset` + `ResetPassword` | T6.02 | — | ☐ |
-| T6.05 | `UpdateUserAvatarCommand` (storage) | T6.02 | — | ☐ |
-| T6.06 | `UserProfileProjector` + `GetUserProfileQuery` | T6.02 | 0008 | ☐ |
-| T6.07 | `IamFacade` + contrato em `shared/contracts` | T6.02 | — | ☐ |
-| T6.08 | **Extrair skills + geradores** (create-module, create-command, create-query-projector, add-integration-event) e validar gerando um módulo dummy | T6.01–T6.07 | 0002 | ☐ |
+| T6.01 | Domínio: `User`, `Session`, `Email`, `UserName`, `Password`, `SupportedLocale`, máquina de estados e catálogo de erros + unit | F4, F5 | 0014 | ☐ |
+| T6.02 | `RegisterUser` + `VerifyEmail` + `ResendVerificationEmail` ponta a ponta (Prisma + Redis + controller + e2e) | T6.01 | 0009 | ☐ |
+| T6.03 | `AuthenticateWithPassword` + `RefreshSessionToken` (rotação e detecção de reuso) + gestão de sessões (`ListMyActiveSessions`, `RevokeSession`, `RevokeOtherSessions`) | T6.02 | 0015 | ☐ |
+| T6.04 | MFA 2FA: `SetupMfaTotp`, `EnableMfaTotp`, `DisableMfa`, `SendMfaEmailOtp`, `VerifyMfaChallenge` (TOTP RFC 6238 anti-replay + E-mail OTP) | T6.03 | 0015 | ☐ |
+| T6.05 | `RequestPasswordReset` + `ResetPassword` + `ChangePassword` (revogação seletiva de sessões) | T6.03 | — | ☐ |
+| T6.06 | Perfil e Avatar em 2 passos: `RequestAvatarUploadUrl` + `UpdateUserProfile` (`StorageGateway`) | T6.02 | — | ☐ |
+| T6.07 | Exclusão e Anonimização LGPD/GDPR (Grace period de 15 dias): `RequestAccountDeletion`, `CancelAccountDeletion`, `AnonymizeExpiredAccounts` | T6.03, T6.04 | — | ☐ |
+| T6.08 | `UserProfileProjector` + `GetUserProfileQuery` | T6.02 | 0008 | ☐ |
+| T6.09 | `IamFacade` + contrato em `shared/contracts` | T6.02 | — | ☐ |
+| T6.10 | **Extrair skills + geradores** (create-module, create-command, create-query-projector, add-integration-event) e validar gerando um módulo dummy | T6.01–T6.09 | 0002 | ☐ |
 
 ## F7 — Módulo `billing`
 

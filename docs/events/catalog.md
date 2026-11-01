@@ -14,7 +14,19 @@ Fonte única de **quais eventos existem, quem produz e quem consome**. Toda task
 | Tópico | Produtor (Command) | Consumidores | Payload (resumo) | Status |
 |---|---|---|---|---|
 | `iam.user.registered.v1` | iam · `RegisterUserCommand` | iam · `UserProfileProjector`; audit | `userId`, `name`, `email`, `locale` | 📝 Planejado |
-| `iam.user.updated.v1` | iam · `UpdateUserAvatarCommand` (e futuros updates de perfil) | iam · `UserProfileProjector`; tenancy · `OrganizationMembersProjector`; audit | `userId`, campos alterados (`name`, `avatarUrl`) | 📝 Planejado |
+| `iam.email_verification.requested.v1` | iam · `RegisterUserCommand`, `ResendVerificationEmailCommand` | notifications · e-mail de verificação | `userId`, `name`, `email`, `locale`, `verificationToken`, `expiresAt` | 📝 Planejado |
+| `iam.user.email_verified.v1` | iam · `VerifyEmailCommand` | iam · `UserProfileProjector`; audit | `userId`, `email`, `verifiedAt` | 📝 Planejado |
+| `iam.session.authenticated.v1` | iam · `AuthenticateWithPasswordCommand`, `VerifyMfaChallengeCommand`, `CancelAccountDeletionCommand` | audit | `userId`, `sessionId`, `mfaVerified`, `ipAddress`, `userAgent` | 📝 Planejado |
+| `iam.session.revoked.v1` | iam · `RefreshSessionTokenCommand` (reuso), `RevokeSessionCommand`, `RevokeOtherSessionsCommand` | notifications (se `TOKEN_REUSE_DETECTED`); audit | `userId`, `sessionId`, `reason` | 📝 Planejado |
+| `iam.mfa.email_otp_requested.v1` | iam · `SendMfaEmailOtpCommand` | notifications · e-mail com OTP de 6 dígitos | `userId`, `name`, `email`, `locale`, `otpCode`, `expiresAt` | 📝 Planejado |
+| `iam.mfa.enabled.v1` | iam · `EnableMfaTotpCommand` | iam · `UserProfileProjector`; notifications; audit | `userId`, `method`, `enabledAt` | 📝 Planejado |
+| `iam.mfa.disabled.v1` | iam · `DisableMfaCommand` | iam · `UserProfileProjector`; notifications; audit | `userId`, `disabledAt` | 📝 Planejado |
+| `iam.password.reset_requested.v1` | iam · `RequestPasswordResetCommand` | notifications · e-mail de reset; audit (sem token) | `userId`, `name`, `email`, `locale`, `resetToken`, `expiresAt` | 📝 Planejado |
+| `iam.password.changed.v1` | iam · `ResetPasswordCommand`, `ChangePasswordCommand` | notifications · alerta de segurança; audit | `userId`, `changeType` (`RESET` \| `AUTHENTICATED_CHANGE`) | 📝 Planejado |
+| `iam.user.updated.v1` | iam · `UpdateUserProfileCommand` | iam · `UserProfileProjector`; tenancy · `OrganizationMembersProjector`; audit | `userId`, `name`, `avatarUrl`, `locale` | 📝 Planejado |
+| `iam.user.deletion_requested.v1` | iam · `RequestAccountDeletionCommand` | notifications · e-mail de agendamento (15 dias); audit | `userId`, `name`, `email`, `locale`, `deletionScheduledFor` | 📝 Planejado |
+| `iam.user.deletion_canceled.v1` | iam · `CancelAccountDeletionCommand` | notifications · e-mail de restauração; audit | `userId`, `name`, `email`, `locale`, `canceledAt` | 📝 Planejado |
+| `iam.user.anonymized.v1` | iam · `AnonymizeExpiredAccountsCommand` | iam · `UserProfileProjector` (delete); tenancy (remove memberships); notifications (limpa inbox); audit | `userId`, `anonymizedAt` | 📝 Planejado |
 | `tenancy.organization.created.v1` | tenancy · `CreateOrganizationCommand` | billing · subscriber (cria assinatura `Free`); billing · `BillingOverviewProjector` (doc inicial); tenancy · projectors; audit | `organizationId`, `name`, `slug`, `ownerUserId` | 📝 Planejado |
 | `tenancy.role.updated.v1` | tenancy · `Create/Update/DeleteCustomRoleCommand` | tenancy · invalidação de cache de permissões; `OrganizationRolesProjector`; audit | `organizationId`, `roleId`, `change` (`created`/`updated`/`deleted`), `permissions` | 📝 Planejado |
 | `tenancy.member.roles_updated.v1` | tenancy · `AssignRolesToMemberCommand`, `TransferOwnershipCommand` | tenancy · invalidação de cache; `OrganizationMembersProjector`; `OrganizationRolesProjector`; audit | `organizationId`, `userId`, `roleIds` | 📝 Planejado |
@@ -30,7 +42,6 @@ Status: 📝 Planejado · 🚧 Em implementação · ✅ Publicado · 🗑️ De
 
 ## Eventos possivelmente faltantes (avaliar na fase do módulo)
 
-- `iam.password.reset_requested.v1` → notifications (e-mail de reset). O blueprint não define como o e-mail de reset é enviado.
 - `billing.subscription.plan_changed.v1` → `BillingOverviewProjector` (troca de plano altera `plan` na view).
 - `billing.subscription.created.v1` → `BillingOverviewProjector` (assinatura Free inicial).
 - `notifications.notification.created.v1` / `read.v1` → `NotificationsInboxProjector` (se a inbox for projetada via Kafka).

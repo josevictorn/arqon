@@ -4,9 +4,9 @@
 
 ## 7.1. Autenticação e Criptografia
 - **Hashing de Senha**: **Argon2id** (configurado com custo de memória e paralelismo adequados).
-- **JWT**:
-  - `accessToken`: Curta duração (15 min), assinado com chave assimétrica, contendo `{ sub: userId, activeTenantId?: string }`.
-  - `refreshToken`: Longa duração (7 dias), armazenado com hash no Redis vinculado à sessão/dispositivo, utilizando **Refresh Token Rotation** (invalidar toda a família de tokens em caso de reuso suspeito).
+- **JWT** (ver [ADR-0015](../decisions/0015-jwt-assimetrico-eddsa-ed25519.md)):
+  - `accessToken`: Curta duração (15 min), assinado com chave assimétrica **EdDSA (`Ed25519`)** via `jose` com `kid` no header, contendo `{ sub: userId, sid: sessionId, mfa: boolean }`.
+  - `refreshToken`: Longa duração (7 dias), token opaco aleatório armazenado com hash SHA-256 vinculado à `Session`/dispositivo, utilizando **Refresh Token Rotation** (invalidar toda a família de tokens em caso de reuso suspeito).
 
 ## 7.2. Multi-Tenancy, Cargos Customizados pelo Usuário & ABAC Dinâmico (CASL)
 Em vez de `roles` engessadas no código (`enum`), o boilerplate implementa um motor de **Cargos Dinâmicos + ABAC (Attribute-Based Access Control)** por Organização (estilo AWS IAM / GitHub Enterprise).
