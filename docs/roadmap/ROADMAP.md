@@ -35,8 +35,8 @@ flowchart LR
 | T0.02 | **(Humano)** Decidir ADRs iniciais (0003 a 0011 todos ✅ Aceitos) | T0.01 | 0003–0011 | ✅ |
 | T0.03 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `iam` + ADRs de IDs (0014) e JWT (0015) | T0.02 | 0014, 0015 | ✅ |
 | T0.04 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `tenancy` + ADRs de Tenant ativo (0016) e RLS (0017) | T0.03 | 0016, 0017 | ✅ |
-| T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento | T0.04 | pergunta "evento pagamento" | 🔄 |
-| T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | ☐ |
+| T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento e catálogo (0018) | T0.04 | 0018 | ✅ |
+| T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | 🔄 |
 | T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope de Integration Event e Schema Registry | T0.06 | pergunta "envelope", pergunta "formato" | ☐ |
 
 ## F1 — Fundação e tooling
@@ -130,17 +130,17 @@ flowchart LR
 
 ## F7 — Módulo `billing`
 
-Spec: [billing](../modules/billing/spec.md). **Primeiro módulo construído com as skills**: registrar atritos e melhorar as skills.
+PRD: [billing/prd.md](../modules/billing/prd.md) · Spec: [billing/spec.md](../modules/billing/spec.md). **Primeiro módulo construído com as skills**: registrar atritos e melhorar as skills.
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T7.01 | Domínio: `Plan`, `Subscription`, `Invoice`, `Money`, factory, `ProrationCalculator` | F6 | — | ☐ |
-| T7.02 | Seed de planos + subscriber `tenancy.organization.created.v1` → assinatura Free | T7.01 | — | ☐ |
-| T7.03 | `CreateCheckoutSessionCommand` | T7.01, T5.04 | — | ☐ |
-| T7.04 | `ChangeSubscriptionPlanCommand` | T7.01 | — | ☐ |
-| T7.05 | `ProcessPaymentWebhookCommand` (idempotente) | T7.01, T5.05 | pergunta "evento pagamento" | ☐ |
-| T7.06 | `BillingOverviewProjector` + `GetBillingOverviewQuery` | T7.02 | 0008 | ☐ |
-| T7.07 | `BillingFacade.checkFeatureQuota` | T7.01 | — | ☐ |
+| T7.01 | Domínio: Catálogo declarativo `plans.catalog.ts` (`FREE` + `FLAT_RATE`), `Plan`, `Subscription`, `Invoice`, `Money`, `SubscriptionDomainFactory`, `SubscriptionPricingStrategy` e `ProrationCalculator` + RLS migrations | F6 | 0014, 0017, 0018 | ☐ |
+| T7.02 | Seed idempotente do catálogo de planos + `ListAvailablePlansQuery` (`GET /billing/plans`) + subscribers `OnOrganizationCreatedSubscriber` (assinatura `Free` local) e `OnOrganizationDeletedSubscriber` | T7.01 | 0008, 0018 | ☐ |
+| T7.03 | `CreateCheckoutSessionCommand` (`PaymentGatewayFactory`: Stripe / Asaas) | T7.01, T5.04 | 0005 | ☐ |
+| T7.04 | `ChangeSubscriptionPlanCommand` (proteção de downgrade contra quota + pró-rata) + `CancelSubscriptionCommand` (`cancelAtPeriodEnd`) + `ReactivateSubscriptionCommand` | T7.02 | 0018 | ☐ |
+| T7.05 | `ProcessPaymentWebhookCommand` (assinatura criptográfica + idempotência `payment_webhook_events` + emissão de `billing.invoice.paid.v1`, `billing.invoice.payment_failed.v1` e `billing.subscription.updated.v1`) | T7.02, T5.05 | 0018 | ☐ |
+| T7.06 | `BillingOverviewProjector` + `GetBillingOverviewQuery` | T7.02 | 0008, 0018 | ☐ |
+| T7.07 | `BillingFacade` (`checkFeatureQuota`, `hasFeatureFlag`, `getOrganizationRateLimitRpm` com cache Redis) | T7.02 | 0018 | ☐ |
 
 ## F8 — Módulo `tenancy`
 

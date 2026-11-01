@@ -36,17 +36,13 @@ Fonte única de **quais eventos existem, quem produz e quem consome**. Toda task
 | `tenancy.invite.canceled.v1` | tenancy · `CancelInviteCommand` | tenancy · `OrganizationMembersProjector`; audit | `organizationId`, `inviteId`, `email`, `canceledByUserId` | 📝 Planejado |
 | `tenancy.member.accepted.v1` | tenancy · `AcceptInviteCommand` | billing · `BillingOverviewProjector` (`$inc usage.currentMembers: 1`); tenancy · `OrganizationMembersProjector`, `OrganizationRolesProjector`; audit | `organizationId`, `userId`, `inviteId`, `roleIds` | 📝 Planejado |
 | `tenancy.member.removed.v1` | tenancy · `RemoveMemberCommand`, `LeaveOrganizationCommand`, `OnUserAnonymizedSubscriber` | billing · `BillingOverviewProjector` (`$inc usage.currentMembers: -1`); tenancy · `OrganizationMembersProjector`, `OrganizationRolesProjector`; audit | `organizationId`, `userId`, `roleIds`, `reason` | 📝 Planejado |
-| `billing.subscription.paid.v1` ⚠️ | billing · `ProcessPaymentWebhookCommand` | billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `invoiceSummary` | 📝 Planejado |
-| `billing.invoice.payment_failed.v1` | billing · `ProcessPaymentWebhookCommand` | notifications · e-mail + in-app para Owners; billing · `BillingOverviewProjector`; audit | `organizationId`, `invoiceId`, `amountCents`, `currency`, `reason` | 📝 Planejado |
+| `billing.subscription.updated.v1` | billing · `OnOrganizationCreatedSubscriber`, `ChangeSubscriptionPlanCommand`, `CancelSubscriptionCommand`, `ReactivateSubscriptionCommand`, `ProcessPaymentWebhookCommand` | billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `planCode`, `planName`, `pricingModel`, `status`, `cancelAtPeriodEnd`, `currentPeriodStart`, `currentPeriodEnd`, `quotas`, `features` | 📝 Planejado |
+| `billing.invoice.paid.v1` | billing · `ProcessPaymentWebhookCommand` | billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `invoiceId`, `provider`, `amountCents`, `currency`, `hostedInvoiceUrl`, `periodStart`, `periodEnd`, `paidAt` | 📝 Planejado |
+| `billing.invoice.payment_failed.v1` | billing · `ProcessPaymentWebhookCommand` | notifications · e-mail + in-app para Owners; billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `invoiceId`, `provider`, `amountCents`, `currency`, `hostedInvoiceUrl`, `reason`, `failedAt` | 📝 Planejado |
 
 Status: 📝 Planejado · 🚧 Em implementação · ✅ Publicado · 🗑️ Depreciado
 
-> [!WARNING]
-> ⚠️ **Inconsistência no blueprint:** o §5.2 usa `billing.invoice.paid.v1` e o `BillingOverviewProjector.onInvoicePaid`; o §12 e `shared/contracts` usam `billing.subscription.paid.v1`. Decidir antes da T7.05 (ver [Perguntas abertas](../decisions/README.md#perguntas-abertas-viram-adr-quando-a-task-correspondente-se-aproximar)).
-
 ## Eventos possivelmente faltantes (avaliar na fase do módulo)
 
-- `billing.subscription.plan_changed.v1` → `BillingOverviewProjector` (troca de plano altera `plan` na view).
-- `billing.subscription.created.v1` → `BillingOverviewProjector` (assinatura Free inicial).
 - `notifications.notification.created.v1` / `read.v1` → `NotificationsInboxProjector` (se a inbox for projetada via Kafka).
 

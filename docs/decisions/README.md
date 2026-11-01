@@ -27,6 +27,7 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0015](./0015-jwt-assimetrico-eddsa-ed25519.md) | Assinatura de JWT assimétrica com EdDSA (Ed25519) via `jose` e Refresh Token Rotation | ✅ Aceito | — | 2026-11-01 |
 | [0016](./0016-resolucao-tenant-ativo-por-requisicao.md) | Resolução do Tenant ativo por requisição (`:orgId` / `X-Organization-Id` validado no Redis) | ✅ Aceito | — | 2026-11-01 |
 | [0017](./0017-isolamento-multi-tenant-rls.md) | Isolamento Multi-Tenant com Defesa em Profundidade (Aplicação + CASL + PostgreSQL RLS) | ✅ Aceito | — | 2026-11-01 |
+| [0018](./0018-taxonomia-eventos-billing-e-catalogo-planos.md) | Taxonomia de eventos do `billing` (`invoice.paid` + `subscription.updated`) e catálogo `FREE` + `FLAT_RATE` extensível | ✅ Aceito | — | 2026-11-01 |
 
 Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 
@@ -36,5 +37,4 @@ Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 |---|---|---|
 | Formato no Schema Registry | JSON Schema, Avro ou Protobuf? (Recomendação: JSON Schema, gerado a partir de Zod) | Antes de T4.02 |
 | Envelope de Integration Event | Campos obrigatórios e headers Kafka | Antes de T2.05 |
-| Nome do evento de pagamento | O blueprint usa `billing.invoice.paid.v1` (§5.2) **e** `billing.subscription.paid.v1` (§12). Qual (ou ambos)? | Antes de T7.05 |
 

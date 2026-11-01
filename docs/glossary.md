@@ -18,11 +18,12 @@ Termos do domínio e da arquitetura. Use **exatamente** estes nomes no código (
 | `PermissionRule` | Regra de permissão | VO que compila ação + recurso + atributos amigáveis em regra CASL | tenancy |
 | `Invite` | Convite | Convite pendente para um e-mail entrar numa organização com cargos pré-definidos | tenancy |
 | `Slug` | Slug | Identificador único e legível da organização na URL | tenancy |
-| `Plan` | Plano | Oferta comercial com preço e quotas (`max_members`, `max_storage_mb`) | billing |
-| `Subscription` | Assinatura | Vínculo da organização a um plano, com status e período | billing |
-| `Invoice` | Fatura | Cobrança de um período de uma assinatura | billing |
-| `Money` | Dinheiro | VO com valor em centavos (inteiro) + moeda ISO 4217 | billing |
-| `Quota` / `featureKey` | Quota | Limite de uso de um recurso definido pelo plano | billing |
+| `Plan` | Plano | Oferta comercial configurável em `plans.catalog.ts` (`FREE` ou `FLAT_RATE`) com preço, `quotas` numéricas e `features` booleanas | billing |
+| `Subscription` | Assinatura | Vínculo `1:1` da organização a um plano ativo (nasce no plano `Free` local e evolui via checkout/webhooks) | billing |
+| `Invoice` | Fatura | Cobrança financeira de um período de uma assinatura paga | billing |
+| `Money` | Dinheiro | VO com valor em centavos (inteiro `>= 0`) + moeda ISO 4217 (`BRL` \| `USD`) | billing |
+| `Quota` (`QuotaKey`) | Quota numérica | Limite quantitativo de uso definido pelo plano (`number \| 'unlimited'`, ex.: `max_members`, `rate_limit_rpm`) | billing |
+| `Feature Flag` (`FeatureKey`) | Funcionalidade do plano | Capacidade booleana liberada pelo plano (`boolean`, ex.: `custom_roles`, `audit_logs`, `custom_domain`) | billing |
 | `Proration` | Pró-rata | Ajuste de valor ao trocar de plano no meio do período | billing |
 | `Notification` | Notificação | Mensagem in-app para um usuário | notifications |
 | `NotificationPreference` | Preferência | Canais que o usuário aceita por tipo de notificação | notifications |
