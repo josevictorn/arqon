@@ -68,16 +68,16 @@ flowchart LR
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T3.01 | `EnvModule` (Zod), falha rápida no boot | F2 | 0012 | ☐ |
-| T3.02 | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (RFC 7807), mapeamento `Either` → HTTP | T3.01 | — | ☐ |
+| T3.01 | `EnvModule` (Zod), falha rápida no boot | F2 | 0012, 0013 | ☐ |
+| T3.02 | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (RFC 7807), mapeamento `Either` → HTTP | T3.01 | 0013 | ☐ |
 | T3.03 | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves | T3.02 | — | ☐ |
 | T3.04 | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02 | 0003 | ☐ |
 | T3.05 | `PrismaModule` + schema `OutboxEvent` + `PrismaUnitOfWork` (ALS) | T3.01 | 0007, 0009 | ☐ |
 | T3.06 | `MongoReadModule` + `MongoReadService` + registro/sincronização de índices de views | T3.01 | — | ☐ |
 | T3.07 | `RedisModule` + `CacheGateway` adapter + `DistributedLockService` | T3.01 | — | ☐ |
-| T3.08 | Observabilidade: `nestjs-pino` (redact, contexto) + OTel `instrumentation.ts` + `/metrics` + `/health/ready` | T3.05–T3.07 | 0006 | ☐ |
+| T3.08 | Observabilidade: `nestjs-pino` (Canonical Log Lines, `LogContextPort`, redact, sampling) + OTel `instrumentation.ts` + `/metrics` + `/health/ready` | T3.05–T3.07 | 0006, 0013 | ☐ |
 | T3.09 | Rate limiting distribuído (Redis) por IP / usuário / tier | T3.07 | — | ☐ |
-| T3.10 | `ResilienceModule` + `ResilienceRegistry` (`cockatiel`) + `@Resilient` + métricas de breaker | T3.08 | 0005 | ☐ |
+| T3.10 | `ResilienceModule` + `ResilienceRegistry` (`cockatiel`) + `@Resilient` + métricas/logs de breaker | T3.08 | 0005, 0013 | ☐ |
 | T3.11 | Infra de testes: schema PG / DB Mongo isolados por worker, limpeza do Redis, base de factories e fakes | T3.05–T3.07 | 0011 | ☐ |
 
 ## F4 — Mensageria, Outbox e BaseProjector
@@ -88,9 +88,9 @@ flowchart LR
 |---|---|---|---|---|
 | T4.01 | Módulo Kafka: producer/consumer atrás de portas (`EventBusGateway`) | F3 | 0004 | ☐ |
 | T4.02 | Schema Registry: registro/validação/serialização a partir dos contratos | T4.01, T2.05 | 0004, pergunta "formato" | ☐ |
-| T4.03 | `OutboxRelayWorker` (`LISTEN/NOTIFY` + fallback 60s, entrypoint de worker) + propagação de `traceparent` | T4.01, T3.05 | 0007 | ☐ |
-| T4.04 | Pipeline de consumo: retry com backoff + DLQ + métricas de lag | T4.01 | — | ☐ |
-| T4.05 | Idempotência: `BaseProjector` (Mongo) + `BaseSubscriber` (`processed_events`) | T4.04 | 0008 | ☐ |
+| T4.03 | `OutboxRelayWorker` (`LISTEN/NOTIFY` + fallback 60s, entrypoint de worker) + propagação de `traceparent` | T4.01, T3.05 | 0007, 0013 | ☐ |
+| T4.04 | Pipeline de consumo: retry com backoff + DLQ + métricas de lag | T4.01 | 0013 | ☐ |
+| T4.05 | Idempotência: `BaseProjector` (Mongo) + `BaseSubscriber` (`processed_events`) | T4.04 | 0008, 0013 | ☐ |
 | T4.06 | Teste e2e do pipeline CQRS completo com um módulo `_example` descartável | T4.02–T4.05 | — | ☐ |
 
 ## F5 — Gateways compartilhados e integrações

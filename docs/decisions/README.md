@@ -22,6 +22,7 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0010](./0010-enforcement-de-arquitetura.md) | Enforcement automático de arquitetura (`dependency-cruiser` + testes) | ✅ Aceito | — | 2026-10-31 |
 | [0011](./0011-infraestrutura-local.md) | Infraestrutura local: Docker Compose com profiles (`core`, `messaging`, `mail-storage`, `observability`, `full`) | ✅ Aceito | — | 2026-10-31 |
 | [0012](./0012-inicializacao-de-novos-projetos.md) | Inicialização de novos projetos (`create-arqon-app` + `pnpm init:project`) | ✅ Aceito | — | 2026-11-01 |
+| [0013](./0013-estrategia-de-logging-canonical-logs-e-custo.md) | Estratégia de logging: Canonical Log Lines (Wide Events), taxonomia e controle de custo | ✅ Aceito | — | 2026-11-01 |
 
 Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 
