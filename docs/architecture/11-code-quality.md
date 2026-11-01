@@ -17,4 +17,8 @@
    - `mailpit`: Servidor SMTP fake com interface web na porta `8025` (profile `mail-storage`).
    - `minio`: Storage S3-compatible local para testar uploads e Presigned URLs (profile `mail-storage`).
    - `otel-lgtm`: `grafana/otel-lgtm` com OTel Collector + Loki + Tempo + Prometheus + Grafana na porta `3001` (profile `observability`).
+4. **Inicialização de Novos Projetos (`create-arqon-app` + `pnpm init:project` — conforme [ADR-0012](../decisions/0012-inicializacao-de-novos-projetos.md))**:
+   - Novos projetos são criados via `pnpm create arqon-app <slug>` (ou `pnpm init:project` após clone/template).
+   - O inicializador renomeia o projeto (`package.json`, `docker-compose.yml`, `.env.example`, docs), gera o `.env` com segredos e chaves criptográficas assimétricas exclusivas (`node:crypto`) e reseta o `docs/roadmap/` para o backlog do novo produto.
+   - Qualquer identificador da aplicação em runtime (`APP_NAME`, `APP_SLUG`, prefixo de cache, `clientId` do Kafka, bucket S3) vem de variáveis de ambiente — nunca hardcoded em `src/`.
 

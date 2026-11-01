@@ -45,9 +45,10 @@ flowchart LR
 | [T1.03](./tasks/T1.03-vitest-setup.md) | Vitest + SWC: projetos unit / int / e2e + setups | T1.01 | 0003 | 📝 |
 | [T1.04](./tasks/T1.04-lefthook-commitlint.md) | Lefthook (pre-commit, commit-msg, pre-push) + Conventional Commits | T1.02, T1.03 | — | 📝 |
 | [T1.05](./tasks/T1.05-architecture-enforcement.md) | dependency-cruiser com as regras de camadas/módulos + `pnpm arch:check` | T1.01 | 0010 | 📝 |
-| [T1.06](./tasks/T1.06-docker-compose.md) | Docker Compose com profiles e healthchecks + `.env.example` | T1.01 | 0003, 0011 | 📝 |
+| [T1.06](./tasks/T1.06-docker-compose.md) | Docker Compose com profiles e healthchecks + `.env.example` | T1.01 | 0003, 0011, 0012 | 📝 |
 | [T1.07](./tasks/T1.07-ci-pipeline.md) | CI (GitHub Actions): `verify` + int/e2e com services | T1.02–T1.06 | — | 📝 |
 | [T1.08](./tasks/T1.08-agents-md-refresh.md) | Atualizar comandos reais no AGENTS.md + AGENTS.md aninhados por camada | T1.07 | 0002 | 📝 |
+| [T1.09](./tasks/T1.09-project-initializer.md) | Script de inicialização de novo projeto (`pnpm init:project`): renomeação, `.env` + chaves criptográficas e reset do roadmap | T1.06, T1.08 | 0012 | 📝 |
 
 ## F2 — `src/shared/core` (blocos de DDD, zero framework)
 
@@ -67,7 +68,7 @@ flowchart LR
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T3.01 | `EnvModule` (Zod), falha rápida no boot | F2 | — | ☐ |
+| T3.01 | `EnvModule` (Zod), falha rápida no boot | F2 | 0012 | ☐ |
 | T3.02 | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (RFC 7807), mapeamento `Either` → HTTP | T3.01 | — | ☐ |
 | T3.03 | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves | T3.02 | — | ☐ |
 | T3.04 | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02 | 0003 | ☐ |
@@ -170,5 +171,5 @@ Spec: [tenancy](../modules/tenancy/spec.md).
 |---|---|---|---|---|
 | T11.01 | Ferramenta de rebuild/replay de views do Mongo | F10 | — | ☐ |
 | T11.02 | Revisão final de docs + validação das skills (implementar uma feature nova só com elas) | F10 | — | ☐ |
-| T11.03 | README de onboarding (do clone ao primeiro endpoint em < 15 min) | T11.02 | — | ☐ |
+| T11.03 | CLI externo `create-arqon-app` (`pnpm create arqon-app`) + README de onboarding (do `create` ao primeiro endpoint em < 15 min) | T11.02 | 0012 | ☐ |
 

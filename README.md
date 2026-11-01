@@ -17,5 +17,5 @@ Boilerplate SaaS enterprise em **NestJS + Fastify** com DDD, Clean/Hexagonal Arc
 
 ## Setup
 
-> Disponível após a Fase 1 (T1.01, T1.06).
+> Disponível após a Fase 1 (T1.01, T1.06, T1.09 — ver [ADR-0012](./docs/decisions/0012-inicializacao-de-novos-projetos.md)).
 

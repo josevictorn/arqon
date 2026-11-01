@@ -30,6 +30,7 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 - Todo projector/consumer é idempotente (ver ADR-0008).
 - Toda chamada externa fica em `src/integrations/` atrás de Gateway + ACL + policy de resiliência.
 - Erros de domínio têm `code` + `i18nKey`; nada de mensagens hardcoded. Toda chave existe em `en` **e** `pt-BR`.
+- Nunca hardcode `arqon` ou `arqon-boilerplate` em `src/`; use variáveis de ambiente (`APP_NAME`, `APP_SLUG`) para permitir inicialização limpa de novos projetos (ver ADR-0012).
 - Proibido: `any` explícito, `console.log` em `src/`, `// @ts-ignore`, `biome-ignore` sem justificativa, desabilitar testes.
 - **Nunca faça `git commit` ou `git push`:** deixe todas as alterações na working tree para revisão e commit manual do humano.
 - Código, identificadores e mensagens de commit sugeridas em **inglês**. Docs e ADRs em **português**.
