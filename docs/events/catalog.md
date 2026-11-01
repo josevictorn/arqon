@@ -5,8 +5,8 @@ Fonte única de **quais eventos existem, quem produz e quem consome**. Toda task
 - **Convenção de tópico:** `<bounded-context>.<aggregate>.<action>.v<version>` (ex.: `billing.subscription.paid.v1`)
 - **DLQ:** `<topic>.dlq`
 - **Chave da mensagem:** `aggregateId` (ordem por agregado). Ver [ADR-0007](../decisions/0007-outbox-relay.md).
-- **Contrato (schema + tipo):** `src/shared/contracts/events/<ctx>/<aggregate>-<action>.v<N>.event.ts`
-- **Envelope:** a definir na T2.05 (`eventId` UUIDv7, `aggregateId`, `aggregateVersion`, `occurredAt`, `tenantId`, `traceparent`, `payload`)
+- **Contrato (schema Zod + JSON Schema Registry):** `src/shared/contracts/events/<ctx>/<aggregate>-<action>.v<N>.event.ts`. Ver [ADR-0020](../decisions/0020-schema-registry-json-schema.md).
+- **Envelope:** `IntegrationEventEnvelope<TPayload>` (`eventId` UUIDv7, `eventName`, `schemaVersion`, `aggregateId`, `aggregateVersion`, `occurredAt`, `tenantId`, `correlationId`, `traceparent`, `actor`, `payload`). Ver [ADR-0019](../decisions/0019-envelope-integration-event.md).
 - **Breaking change** → nova versão (`v2`), publicando `v1` e `v2` em paralelo durante a transição.
 
 ## Eventos

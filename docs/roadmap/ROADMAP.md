@@ -37,7 +37,7 @@ flowchart LR
 | T0.04 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `tenancy` + ADRs de Tenant ativo (0016) e RLS (0017) | T0.03 | 0016, 0017 | ✅ |
 | T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento e catálogo (0018) | T0.04 | 0018 | ✅ |
 | T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | ✅ |
-| T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope de Integration Event e Schema Registry | T0.06 | pergunta "envelope", pergunta "formato" | 🔄 |
+| T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope (0019) e Schema Registry (0020) | T0.06 | 0019, 0020 | ✅ |
 
 ## F1 — Fundação e tooling
 
@@ -65,7 +65,7 @@ flowchart LR
 | T2.02 | `UniqueEntityID` (UUIDv7) + `Entity` + `ValueObject` | T2.01 | 0014 | ☐ |
 | T2.03 | `AggregateRoot` + `DomainEvent` + registro/dispatch de domain events | T2.02 | 0009 | ☐ |
 | T2.04 | `WatchedList` | T2.02 | — | ☐ |
-| T2.05 | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (schema Zod + tipo) | T2.03 | 0008, pergunta "envelope" | ☐ |
+| T2.05 | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (`defineIntegrationEventContract` Zod + tipo) | T2.03 | 0008, 0014, 0019, 0020 | ☐ |
 
 ## F3 — `src/shared/infra` (plataforma)
 
@@ -92,7 +92,7 @@ flowchart LR
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
 | T4.01 | Módulo Kafka: producer/consumer atrás de portas (`EventBusGateway`) | F3 | 0004 | ☐ |
-| T4.02 | Schema Registry: registro/validação/serialização a partir dos contratos | T4.01, T2.05 | 0004, pergunta "formato" | ☐ |
+| T4.02 | Schema Registry: registro/validação/serialização JSON Schema a partir dos contratos Zod (`BACKWARD`) | T4.01, T2.05 | 0004, 0020 | ☐ |
 | T4.03 | `OutboxRelayWorker` (`LISTEN/NOTIFY` + fallback 60s, entrypoint de worker) + propagação de `traceparent` | T4.01, T3.05 | 0007, 0013 | ☐ |
 | T4.04 | Pipeline de consumo: retry com backoff + DLQ + métricas de lag | T4.01 | 0013 | ☐ |
 | T4.05 | Idempotência: `BaseProjector` (Mongo) + `BaseSubscriber` (`processed_events`) | T4.04 | 0008, 0013 | ☐ |
@@ -169,10 +169,12 @@ PRD: [notifications/prd.md](../modules/notifications/prd.md) · Spec: [notificat
 
 ## F10 — Módulo `audit`
 
+PRD: [audit/prd.md](../modules/audit/prd.md) · Spec: [audit/spec.md](../modules/audit/spec.md).
+
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T10.01 | Projector de audit (eventos críticos) + índices + TTL | F8 | 0008 | ☐ |
-| T10.02 | `FetchOrganizationAuditLogsQuery` + policy CASL + paginação por cursor | T10.01 | — | ☐ |
+| T10.01 | `AuditLogSanitizer` + `OrganizationAuditLogProjector` (governado por `BillingFacade.getOrganizationAuditLogPolicy` e `TenancyFacade.auditLogsEnabled` + anonimização LGPD + TTL dinâmico `expiresAt`) + `PersonalSecurityAuditLogProjector` | F8 | 0008, 0018, 0019 | ☐ |
+| T10.02 | `FetchOrganizationAuditLogsQuery` (CASL `read AuditLog` + feature flag `audit_logs` + filtros + cursor) + `FetchMySecurityLogsQuery` (`/me/security-logs`) | T10.01 | 0016, 0018 | ☐ |
 
 ## F11 — Hardening e entrega
 

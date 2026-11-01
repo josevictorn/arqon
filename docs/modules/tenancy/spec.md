@@ -120,6 +120,7 @@ export interface OrganizationSummaryDto {
   name: string
   slug: string
   requireMfa: boolean
+  auditLogsEnabled: boolean
 }
 
 export interface MemberAuthorizationContextDto {

@@ -28,13 +28,12 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0016](./0016-resolucao-tenant-ativo-por-requisicao.md) | Resolução do Tenant ativo por requisição (`:orgId` / `X-Organization-Id` validado no Redis) | ✅ Aceito | — | 2026-11-01 |
 | [0017](./0017-isolamento-multi-tenant-rls.md) | Isolamento Multi-Tenant com Defesa em Profundidade (Aplicação + CASL + PostgreSQL RLS) | ✅ Aceito | — | 2026-11-01 |
 | [0018](./0018-taxonomia-eventos-billing-e-catalogo-planos.md) | Taxonomia de eventos do `billing` (`invoice.paid` + `subscription.updated`) e catálogo `FREE` + `FLAT_RATE` extensível | ✅ Aceito | — | 2026-11-01 |
+| [0019](./0019-envelope-integration-event.md) | Envelope padronizado de `IntegrationEvent` preenchido via `AsyncLocalStorage` | ✅ Aceito | — | 2026-11-01 |
+| [0020](./0020-schema-registry-json-schema.md) | Schema Registry com JSON Schema gerado automaticamente a partir dos contratos Zod | ✅ Aceito | — | 2026-11-01 |
 
 Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 
 ## Perguntas abertas (viram ADR quando a task correspondente se aproximar)
 
-| Tema | Pergunta | Quando decidir |
-|---|---|---|
-| Formato no Schema Registry | JSON Schema, Avro ou Protobuf? (Recomendação: JSON Schema, gerado a partir de Zod) | Antes de T4.02 |
-| Envelope de Integration Event | Campos obrigatórios e headers Kafka | Antes de T2.05 |
+> Todas as perguntas arquiteturais iniciais foram decididas e convertidas nos ADRs 0001 a 0020. Novas decisões que surgirem durante a implementação das fases devem seguir a skill [`write-adr`](../../.agents/skills/write-adr/SKILL.md).
 

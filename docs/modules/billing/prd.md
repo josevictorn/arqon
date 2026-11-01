@@ -45,6 +45,7 @@ Por isso, toda a configuração comercial vive em **`src/modules/billing/domain/
    - *Quotas nativas usadas pelo boilerplate:*
      - `max_members`: limite máximo de membros + convites pendentes na organização (validado pelo `tenancy`).
      - `rate_limit_rpm`: limite de requisições por minuto da organização (aplicado pelo `RateLimiter` distribuído em Redis).
+     - `audit_log_retention_days`: dias de retenção dos logs de auditoria da organização no MongoDB (ex.: `0` no Free, `90` no Pro, `365` ou `'unlimited'` no Enterprise — consumido pelo `audit`).
    - *Fácil adição pelo desenvolvedor:* basta adicionar uma chave no objeto do catálogo (ex.: `max_projects`, `max_webhooks`) para que ela fique imediatamente tipada no `BillingFacade.checkFeatureQuota`.
 2. **Feature Flags Booleanas (`FeatureKey`):** capacidades liberadas pelo plano (`boolean`).
    - *Exemplos padrão no catálogo:* `custom_roles` (permite criar cargos customizados no `tenancy`), `audit_logs` (permite consultar logs de auditoria no `audit`), `custom_domain`, `priority_support`.
@@ -55,12 +56,12 @@ Por isso, toda a configuração comercial vive em **`src/modules/billing/domain/
 
 ### Exemplo Default que Acompanha o Boilerplate (Editável pelo Usuário)
 
-| `code` (Exemplo) | Nome | `pricingModel` | Intervalo | Preço Exemplo (`BRL` / `USD`) | `quotas` (`max_members` / `rate_limit_rpm`) | `features` (Exemplos) |
+| `code` (Exemplo) | Nome | `pricingModel` | Intervalo | Preço Exemplo (`BRL` / `USD`) | `quotas` (`max_members` / `rate_limit_rpm` / `audit_log_retention_days`) | `features` (Exemplos) |
 |---|---|---|---|---|---|---|
-| `free` (`isDefaultFree: true`) | **Free** | `FREE` | `MONTHLY` | `0` / `0` | `3` membros · `60` rpm | `custom_roles: false`, `audit_logs: false`, `custom_domain: false` |
-| `pro_monthly` | **Pro** | `FLAT_RATE` | `MONTHLY` | `9900` (R$ 99) / `2000` ($ 20) | `25` membros · `300` rpm | `custom_roles: true`, `audit_logs: false`, `custom_domain: true` |
-| `pro_yearly` | **Pro Anual** | `FLAT_RATE` | `YEARLY` | `99000` (R$ 990) / `20000` ($ 200) | `25` membros · `300` rpm | `custom_roles: true`, `audit_logs: false`, `custom_domain: true` |
-| `enterprise_monthly` | **Enterprise** | `FLAT_RATE` | `MONTHLY` | `49900` (R$ 499) / `9900` ($ 99) | `'unlimited'` · `1000` rpm | `custom_roles: true`, `audit_logs: true`, `custom_domain: true` |
+| `free` (`isDefaultFree: true`) | **Free** | `FREE` | `MONTHLY` | `0` / `0` | `3` membros · `60` rpm · `0` dias | `custom_roles: false`, `audit_logs: false`, `custom_domain: false` |
+| `pro_monthly` | **Pro** | `FLAT_RATE` | `MONTHLY` | `9900` (R$ 99) / `2000` ($ 20) | `25` membros · `300` rpm · `90` dias | `custom_roles: true`, `audit_logs: true`, `custom_domain: true` |
+| `pro_yearly` | **Pro Anual** | `FLAT_RATE` | `YEARLY` | `99000` (R$ 990) / `20000` ($ 200) | `25` membros · `300` rpm · `90` dias | `custom_roles: true`, `audit_logs: true`, `custom_domain: true` |
+| `enterprise_monthly` | **Enterprise** | `FLAT_RATE` | `MONTHLY` | `49900` (R$ 499) / `9900` ($ 99) | `'unlimited'` · `1000` rpm · `365` dias (ou `'unlimited'`) | `custom_roles: true`, `audit_logs: true`, `custom_domain: true` |
 
 ---
 

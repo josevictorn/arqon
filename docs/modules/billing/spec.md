@@ -43,6 +43,7 @@ export interface PlanDefinition<
 export interface DefaultPlanQuotas {
   max_members: QuotaValue
   rate_limit_rpm: number
+  audit_log_retention_days: QuotaValue
 }
 
 export interface DefaultPlanFeatures {
@@ -163,10 +164,18 @@ export interface CheckFeatureFlagOutput {
   planName: string
 }
 
+export interface AuditLogRetentionPolicyOutput {
+  enabled: boolean
+  retentionDays: number | 'unlimited'
+}
+
 export abstract class BillingFacadeContract {
   abstract checkFeatureQuota(input: CheckQuotaInput): Promise<CheckQuotaOutput>
   abstract hasFeatureFlag(input: CheckFeatureFlagInput): Promise<CheckFeatureFlagOutput>
   abstract getOrganizationRateLimitRpm(organizationId: string): Promise<number>
+  abstract getOrganizationAuditLogPolicy(
+    organizationId: string,
+  ): Promise<AuditLogRetentionPolicyOutput>
 }
 ```
 
