@@ -36,8 +36,8 @@ flowchart LR
 | T0.03 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `iam` + ADRs de IDs (0014) e JWT (0015) | T0.02 | 0014, 0015 | ✅ |
 | T0.04 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `tenancy` + ADRs de Tenant ativo (0016) e RLS (0017) | T0.03 | 0016, 0017 | ✅ |
 | T0.05 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `billing` + ADR de evento de pagamento e catálogo (0018) | T0.04 | 0018 | ✅ |
-| T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | 🔄 |
-| T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope de Integration Event e Schema Registry | T0.06 | pergunta "envelope", pergunta "formato" | ☐ |
+| T0.06 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `notifications` | T0.05 | — | ✅ |
+| T0.07 | PRD (`prd.md`) + Spec (`spec.md`) completa do módulo `audit` + ADRs de Envelope de Integration Event e Schema Registry | T0.06 | pergunta "envelope", pergunta "formato" | 🔄 |
 
 ## F1 — Fundação e tooling
 
@@ -159,11 +159,13 @@ PRD: [tenancy/prd.md](../modules/tenancy/prd.md) · Spec: [tenancy/spec.md](../m
 
 ## F9 — Módulo `notifications`
 
+PRD: [notifications/prd.md](../modules/notifications/prd.md) · Spec: [notifications/spec.md](../modules/notifications/spec.md).
+
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T9.01 | Domínio + `SendNotification` / `MarkAsRead` | F8 | — | ☐ |
-| T9.02 | `NotificationsInboxProjector` + `FetchUnreadNotificationsQuery` | T9.01 | 0008 | ☐ |
-| T9.03 | Consumers: convite, falha de pagamento, reset de senha | T9.01, T5.03 | 0008 | ☐ |
+| T9.01 | Domínio (`Notification`, `NotificationPreference`, `NotificationCategory`) + Commands (`SendNotification`, `MarkNotificationAsRead`, `MarkAllNotificationsAsRead`, `UpdateNotificationPreferences`) + `GetNotificationPreferencesQuery` | F8 | 0014 | ☐ |
+| T9.02 | `NotificationsInboxProjector` (`user_notifications_views` + `user_notification_counters_views` + TTL 90d) + `FetchUserNotificationsQuery` (i18n tardia + cursor) | T9.01 | 0008 | ☐ |
+| T9.03 | Subscribers: `TransactionalAuthEmailsSubscriber`, `OrganizationInviteEmailSubscriber`, `SecurityAlertsNotificationSubscriber`, `BillingAlertsNotificationSubscriber`, `TeamActivityNotificationSubscriber` e `OnUserAnonymizedNotificationsSubscriber` | T9.01, T5.03 | 0005, 0008 | ☐ |
 
 ## F10 — Módulo `audit`
 

@@ -39,10 +39,9 @@ Fonte única de **quais eventos existem, quem produz e quem consome**. Toda task
 | `billing.subscription.updated.v1` | billing · `OnOrganizationCreatedSubscriber`, `ChangeSubscriptionPlanCommand`, `CancelSubscriptionCommand`, `ReactivateSubscriptionCommand`, `ProcessPaymentWebhookCommand` | billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `planCode`, `planName`, `pricingModel`, `status`, `cancelAtPeriodEnd`, `currentPeriodStart`, `currentPeriodEnd`, `quotas`, `features` | 📝 Planejado |
 | `billing.invoice.paid.v1` | billing · `ProcessPaymentWebhookCommand` | billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `invoiceId`, `provider`, `amountCents`, `currency`, `hostedInvoiceUrl`, `periodStart`, `periodEnd`, `paidAt` | 📝 Planejado |
 | `billing.invoice.payment_failed.v1` | billing · `ProcessPaymentWebhookCommand` | notifications · e-mail + in-app para Owners; billing · `BillingOverviewProjector`; audit | `organizationId`, `subscriptionId`, `invoiceId`, `provider`, `amountCents`, `currency`, `hostedInvoiceUrl`, `reason`, `failedAt` | 📝 Planejado |
+| `notifications.notification.created.v1` | notifications · `SendNotificationCommand` | notifications · `NotificationsInboxProjector` | `notificationId`, `recipientUserId`, `organizationId`, `category`, `type`, `titleI18nKey`, `bodyI18nKey`, `interpolationArgs`, `actionUrl`, `createdAt` | 📝 Planejado |
+| `notifications.notification.read.v1` | notifications · `MarkNotificationAsReadCommand` | notifications · `NotificationsInboxProjector` | `notificationId`, `recipientUserId`, `readAt` | 📝 Planejado |
+| `notifications.notifications.all_read.v1` | notifications · `MarkAllNotificationsAsReadCommand` | notifications · `NotificationsInboxProjector` | `recipientUserId`, `readAt` | 📝 Planejado |
 
 Status: 📝 Planejado · 🚧 Em implementação · ✅ Publicado · 🗑️ Depreciado
-
-## Eventos possivelmente faltantes (avaliar na fase do módulo)
-
-- `notifications.notification.created.v1` / `read.v1` → `NotificationsInboxProjector` (se a inbox for projetada via Kafka).
 
