@@ -1,7 +1,13 @@
-# Dependency updates grouped by ecosystem: one PR per ecosystem per week.
-# Commit prefixes follow commitlint.config.ts (scope `deps`).
-# `cooldown` waits a few days after a release before proposing it, reducing
-# exposure to compromised or quickly-yanked versions.
+# Dependency update policy — ADR-0022.
+#
+# - Only patch/minor updates become PRs. Majors are ignored: ADR-0003 requires
+#   a new ADR for any major upgrade, done in a dedicated task.
+# - NestJS + Fastify move together in their own group (they pin each other).
+# - MongoDB stays on the 8.0 line (patch only).
+# - Commit prefixes follow commitlint.config.ts (scope `deps`).
+# - `cooldown` waits a few days after a release before proposing it, reducing
+#   exposure to compromised or quickly-yanked versions.
+# - Dependabot never merges: every PR goes through CI and human review.
 version: 2
 
 updates:
@@ -15,7 +21,12 @@ updates:
     commit-message:
       prefix: build(deps)
       prefix-development: build(deps)
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-major" ]
     groups:
+      nestjs:
+        patterns: [ "@nestjs/*", "fastify", "@fastify/*" ]
       npm:
         patterns: [ "*" ]
 
@@ -40,6 +51,11 @@ updates:
       default-days: 7
     commit-message:
       prefix: build(deps)
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: mongo
+        update-types: [ "version-update:semver-minor" ]
     groups:
       docker-compose:
         patterns: [ "*" ]
