@@ -31,6 +31,7 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0019](./0019-envelope-integration-event.md) | Envelope padronizado de `IntegrationEvent` preenchido via `AsyncLocalStorage` | ✅ Aceito | — | 2026-11-01 |
 | [0020](./0020-schema-registry-json-schema.md) | Schema Registry com JSON Schema gerado automaticamente a partir dos contratos Zod | ✅ Aceito | — | 2026-11-01 |
 | [0021](./0021-redpanda-e-rustfs-na-infra-local.md) | Infra local: Redpanda (Kafka API + Schema Registry) e RustFS (S3) no lugar de Kafka + Schema Registry separados e MinIO | ✅ Aceito | — | 2026-11-02 |
+| [0022](./0022-politica-de-atualizacao-de-dependencias.md) | Atualização automática de dependências só em patch/minor (Dependabot); majors exigem ADR | ✅ Aceito | — | 2026-11-02 |
 
 Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 

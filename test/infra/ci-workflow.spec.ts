@@ -33,6 +33,15 @@ const PNPM_CACHE = /cache:\s*pnpm\s*$/mu;
 const FROZEN_INSTALL = /run:\s*pnpm install --frozen-lockfile\s*$/mu;
 const TIMEOUT = /timeout-minutes:\s*\d+\s*$/mu;
 const NEEDS_VERIFY = /needs:\s*verify\s*$/mu;
+const ECOSYSTEM_START = /^ {2}- package-ecosystem: /mu;
+const ECOSYSTEM_NAME = /^(?<name>[a-z-]+)\s*$/mu;
+const IGNORE_MAJORS =
+  /dependency-name: "\*"\s*\n\s+update-types: \[ "version-update:semver-major" \]/mu;
+const MONGO_PATCH_ONLY =
+  /dependency-name: mongo\s*\n\s+update-types: \[ "version-update:semver-minor" \]/mu;
+const NESTJS_GROUP =
+  /^ {6}nestjs:\s*\n\s+patterns: \[ "@nestjs\/\*", "fastify", "@fastify\/\*" \]/mu;
+const CATCH_ALL_NPM_GROUP = /^ {6}npm:\s*\n\s+patterns: \[ "\*" \]/mu;
 const runs = (command: string) =>
   new RegExp(`run:\\s*pnpm ${command}\\s*$`, "mu");
 
@@ -91,14 +100,54 @@ describe(".github/workflows/ci.yml", () => {
   });
 });
 
+/** Splits `updates:` into `{ ecosystem -> body }`. */
+const parseEcosystems = (config: string) =>
+  new Map(
+    config.split(ECOSYSTEM_START).flatMap((chunk) => {
+      const ecosystem = ECOSYSTEM_NAME.exec(chunk)?.groups?.name;
+      return ecosystem ? [[ecosystem, chunk] as const] : [];
+    })
+  );
+
+const ecosystems = parseEcosystems(DEPENDABOT);
+const npm = ecosystems.get("npm") ?? "";
+const dockerCompose = ecosystems.get("docker-compose") ?? "";
+
+// ADR-0022: only patch/minor PRs; majors need a new ADR (ADR-0003).
 describe(".github/dependabot.yml", () => {
+  it("covers npm, github-actions and docker-compose", () => {
+    expect([...ecosystems.keys()]).toEqual([
+      "npm",
+      "github-actions",
+      "docker-compose",
+    ]);
+  });
+
   it.each(["npm", "github-actions", "docker-compose"])(
-    "groups %s updates",
+    "groups %s updates into a single PR",
     (ecosystem) => {
-      expect(DEPENDABOT).toContain(`package-ecosystem: ${ecosystem}`);
-      expect(DEPENDABOT).toMatch(
+      expect(ecosystems.get(ecosystem)).toMatch(
         new RegExp(`^ {6}${ecosystem}:\\s*\\n\\s+patterns:`, "mu")
       );
     }
   );
+
+  it.each([
+    ["npm", npm],
+    ["docker-compose", dockerCompose],
+  ])("never proposes %s major updates", (_ecosystem, body) => {
+    expect(body).toMatch(IGNORE_MAJORS);
+  });
+
+  it("moves NestJS and Fastify together, before the catch-all group", () => {
+    expect(npm).toMatch(NESTJS_GROUP);
+    expect(npm).toMatch(CATCH_ALL_NPM_GROUP);
+    expect(npm.search(NESTJS_GROUP)).toBeLessThan(
+      npm.search(CATCH_ALL_NPM_GROUP)
+    );
+  });
+
+  it("keeps MongoDB on its release line (patch only)", () => {
+    expect(dockerCompose).toMatch(MONGO_PATCH_ONLY);
+  });
 });
