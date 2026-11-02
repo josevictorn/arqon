@@ -45,7 +45,7 @@ flowchart LR
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| [T1.01](./tasks/T1.01-scaffold-nestjs-fastify.md) | Scaffold NestJS + Fastify + TS strict + pnpm + aliases + `/health/live` | F0 | 0003, 0012 | 📝 |
+| [T1.01](./tasks/T1.01-scaffold-nestjs-fastify.md) | Scaffold NestJS + Fastify + TS strict + pnpm + aliases + `/health/live` | F0 | 0003, 0012 | ✅ |
 | [T1.02](./tasks/T1.02-biome-ultracite.md) | Biome + Ultracite + scripts de lint/format | T1.01 | 0003 | 📝 |
 | [T1.03](./tasks/T1.03-vitest-setup.md) | Vitest + SWC: projetos unit / int / e2e + setups | T1.01 | 0003 | 📝 |
 | [T1.04](./tasks/T1.04-lefthook-commitlint.md) | Lefthook (pre-commit, commit-msg, pre-push) + Conventional Commits | T1.02, T1.03 | — | 📝 |

@@ -4,7 +4,7 @@
 
 | Categoria | Tecnologia / Biblioteca | Papel na Arquitetura |
 | :--- | :--- | :--- |
-| **Runtime & Framework** | Node.js LTS + **NestJS 10/11** + `@nestjs/platform-fastify` | Core do servidor HTTP de alta performance com Fastify. |
+| **Runtime & Framework** | **Node.js 24 LTS** + **NestJS 11.2.8** + `@nestjs/platform-fastify` 11.2.8 (Fastify 5, TypeScript 5.9, pnpm 11, build SWC) | Core do servidor HTTP de alta performance com Fastify. Versões exatas fixadas no `package.json` (ADR-0003). |
 | **Validação & OpenAPI** | **Zod** + `nestjs-zod` + `@scalar/nestjs-api-reference` | Single Source of Truth: um único schema Zod valida o request e gera a documentação interativa no **Scalar API**. |
 | **Write DB (Commands)** | **PostgreSQL 16+** + **Prisma ORM** | Fonte da verdade transacional (ACID), modelos normalizados, `UnitOfWork` e tabela de `Outbox`. |
 | **Read DB (Queries / CQRS)** | **MongoDB 7+** (`mongodb` driver nativo) | Armazenamento de **Read Models (Views desnormalizadas)** alimentadas via Kafka para leituras ultra-rápidas, filtros dinâmicos e agregações sem onerar o PostgreSQL. |
@@ -19,5 +19,5 @@
 | **Storage** | `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner` | Abstração de Object Storage (AWS S3 / Cloudflare R2 / MinIO) com suporte a Presigned URLs. |
 | **Testes** | **Vitest** + `supertest` + `@faker-js/faker` | Testes Unitários (In-Memory), Integração e E2E com schemas isolados no PostgreSQL e databases isolados no MongoDB por worker. |
 | **Code Quality & Git** | **Biome** + **Ultracite** + **Lefthook** | Linter/Formatter ultra-rápido em Rust (Biome + preset Ultracite) e Git Hooks automatizados (Lefthook). |
-| **Infra Dev** | **Docker** & **Docker Compose** | Orquestração local de PostgreSQL, MongoDB, Redis, Kafka (KRaft) + Schema Registry, Mailpit, MinIO e OpenTelemetry Collector. |
+| **Infra Dev** | **Docker** & **Docker Compose** | Orquestração local de PostgreSQL, MongoDB, Redis, Kafka (KRaft) + Schema Registr, Mailpit, MinIO e OpenTelemetry Collector. |
 
