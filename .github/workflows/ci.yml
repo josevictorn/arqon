@@ -74,4 +74,6 @@ jobs:
 
       - name: Dump infra logs
         if: failure()
-        run: docker compose --profile core logs --no-color
+        run: |
+          docker compose --profile core ps --all
+          docker compose --profile core logs --no-color
