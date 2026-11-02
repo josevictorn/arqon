@@ -17,7 +17,19 @@ Boilerplate SaaS enterprise em **NestJS + Fastify** com DDD, Clean/Hexagonal Arc
 
 ## Setup
 
-> Setup completo disponível após a Fase 1 (T1.01, T1.06, T1.09 — ver [ADR-0012](./docs/decisions/0012-inicializacao-de-novos-projetos.md)).
+### Novo projeto a partir do boilerplate
+
+Numa cópia limpa (GitHub Template ou clone sem o histórico do upstream), um comando transforma o boilerplate no seu projeto ([ADR-0012](./docs/decisions/0012-inicializacao-de-novos-projetos.md)):
+
+```bash
+pnpm install
+pnpm init:project --name meu-saas --description "Meu SaaS"   # ou só `pnpm init:project` (interativo)
+```
+
+- **Renomeia** o projeto (`package.json`, `.env.example`, `docker-compose.yml`, `README.md`, `AGENTS.md` e skills).
+- **Cria o `.env`** com segredos exclusivos: par de chaves JWT `Ed25519` + `JWT_KEY_ID` e `MFA_ENCRYPTION_KEY` ([ADR-0015](./docs/decisions/0015-jwt-assimetrico-eddsa-ed25519.md)). Um `.env` existente nunca é sobrescrito.
+- **Reseta o roadmap:** remove as tasks de construção do boilerplate e cria um `docs/roadmap/ROADMAP.md` limpo para o novo produto; ADRs, arquitetura e specs dos módulos são mantidos.
+- **Travas:** recusa rodar se o `git remote` apontar para o repositório upstream ou se o projeto já tiver sido inicializado (use `--force` para ignorar). `pnpm init:project --help` lista as opções.
 
 ### Infraestrutura local (Docker Compose)
 

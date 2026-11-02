@@ -14,6 +14,7 @@
     "infra:reset": "docker compose --profile full down --volumes --remove-orphans",
     "infra:up": "docker compose --profile core up -d --wait",
     "infra:up:full": "docker compose --profile full up -d --wait",
+    "init:project": "node scripts/init-project.ts",
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "prepare": "lefthook install || true",

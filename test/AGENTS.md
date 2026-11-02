@@ -3,7 +3,7 @@
 ## Níveis (Vitest + SWC, um `project` cada)
 | Nível | Arquivo | Alvo | Infra |
 |---|---|---|---|
-| unit | `src/**/*.spec.ts` (+ `test/architecture`, `test/infra`) | domínio, commands, queries, subscribers | nenhuma, 100% em memória |
+| unit | `src/**/*.spec.ts` (+ `test/architecture`, `test/infra`, `test/scripts`) | domínio, commands, queries, subscribers | nenhuma, 100% em memória |
 | int | `src/**/*.int-spec.ts` | repositórios Prisma/Mongo, projectors, UoW, Outbox | `pnpm infra:up` |
 | e2e | `test/**/*.e2e-spec.ts` | controllers + fluxo CQRS com o `AppModule` real via `app.inject()` | `pnpm infra:up` |
 
@@ -14,6 +14,7 @@
 - Unit usa repositórios in-memory (`InMemoryWriteRepositories` / `InMemoryReadRepositories`), nunca Prisma/Mongo.
 - `test/architecture/`: prova das regras do `arch:check` (fixtures violam de propósito).
 - `test/infra/`: guardas de configuração (CI, compose, AGENTS.md).
+- `test/scripts/`: roda os `scripts/*.ts` reais com `node` numa cópia do repo em `os.tmpdir()` (nunca na working tree).
 
 ## Obrigatórios
 - **Anti-vazamento cross-tenant:** todo repositório/query de dado de tenant tem teste que cria dados em 2 organizações e prova que A não lê nem altera B (int, com RLS ativo).
