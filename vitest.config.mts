@@ -39,7 +39,11 @@ export default defineConfig({
       reporter: ["text", "lcov"],
     },
     projects: [
-      createProject("unit", ["src/**/*.spec.ts"], "./test/setup-unit.ts"),
+      createProject(
+        "unit",
+        ["src/**/*.spec.ts", "test/architecture/**/*.spec.ts"],
+        "./test/setup-unit.ts"
+      ),
       createProject(
         "int",
         ["src/**/*.int-spec.ts"],

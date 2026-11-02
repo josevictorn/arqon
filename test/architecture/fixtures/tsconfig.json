@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "paths": {
+      "@/shared/*": ["src/shared/*"],
+      "@/modules/*": ["src/modules/*"],
+      "@/integrations/*": ["src/integrations/*"]
+    }
+  },
+  "include": ["src/**/*", "fixture-packages.d.ts"]
+}

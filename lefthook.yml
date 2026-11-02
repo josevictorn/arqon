@@ -18,6 +18,5 @@ pre-push:
     test-related:
       glob: "*.{js,ts}"
       run: pnpm exec vitest related --run --passWithNoTests --project unit {push_files}
-    # Enable when T1.05 adds the `arch:check` script:
-    # arch-check:
-    #   run: pnpm arch:check
+    arch-check:
+      run: pnpm arch:check

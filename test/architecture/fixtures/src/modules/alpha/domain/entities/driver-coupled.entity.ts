@@ -1,0 +1,7 @@
+// VIOLATION domain-pure (x4): domain importing persistence/messaging drivers.
+import type { KafkaJS } from "@confluentinc/kafka-javascript";
+import type { PrismaClient } from "@prisma/client";
+import type Redis from "ioredis";
+import type { Db } from "mongodb";
+
+export type Drivers = [KafkaJS.Kafka, PrismaClient, Redis, Db];
