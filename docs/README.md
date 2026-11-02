@@ -3,6 +3,7 @@
 | Pasta / arquivo | Pergunta que responde | Público principal |
 |---|---|---|
 | [`/AGENTS.md`](../AGENTS.md) | Quais regras sigo sempre? Quais comandos rodo? | IA |
+| `AGENTS.md` aninhados ([core](../src/shared/core/AGENTS.md), [modules](../src/modules/AGENTS.md), [integrations](../src/integrations/AGENTS.md), [test](../test/AGENTS.md)) | Quais regras valem na pasta que estou editando? | IA |
 | [`/ARCHITECTURE.md`](../ARCHITECTURE.md) | Qual é a visão geral? Por onde começo? | Humano + IA |
 | [`workflow.md`](./workflow.md) | Como as tasks são executadas, revisadas e encerradas? | Humano |
 | [`architecture/`](./architecture/) | Como cada parte técnica funciona (CQRS, eventos, CASL...)? | IA (sob demanda) + Humano |
