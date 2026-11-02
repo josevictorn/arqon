@@ -1,0 +1,45 @@
+# Dependency updates grouped by ecosystem: one PR per ecosystem per week.
+# Commit prefixes follow commitlint.config.ts (scope `deps`).
+# `cooldown` waits a few days after a release before proposing it, reducing
+# exposure to compromised or quickly-yanked versions.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: build(deps)
+      prefix-development: build(deps)
+    groups:
+      npm:
+        patterns: [ "*" ]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci(deps)
+    groups:
+      github-actions:
+        patterns: [ "*" ]
+
+  # Images pinned in docker-compose.yml (ADR-0021).
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: build(deps)
+    groups:
+      docker-compose:
+        patterns: [ "*" ]

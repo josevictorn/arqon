@@ -41,6 +41,13 @@ services:
     # Single-node replica set: required for multi-document transactions and
     # change streams. The healthcheck initiates it on first boot (idempotent).
     command: [ "mongod", "--replSet", "rs0", "--bind_ip_all" ]
+    environment:
+      # Linux kernels 6.19 → 7.0.13 (e.g. Ubuntu 26.04 / `ubuntu-latest` CI
+      # runners) crash mongod 8.x through its vendored TCMalloc; the image ships
+      # `rseq=0`, which is the crashing setting. `rseq=1` makes TCMalloc fall
+      # back to per-thread caches (negligible for dev/CI). Remove once fixed
+      # kernels are widespread. See docker-library/mongo#748, SERVER-120238.
+      GLIBC_TUNABLES: glibc.pthread.rseq=1
     ports:
       - "${MONGO_PORT:-27017}:27017"
     volumes:

@@ -31,6 +31,8 @@ const PROJECT_NAME = /^name: \$\{APP_SLUG:-[a-z][a-z0-9-]*\}$/mu;
 const EXACT_TAG = /:[\w.-]+$/u;
 const LATEST_TAG = /:latest$/u;
 const MINIO_IMAGE = /(?:^|\/)minio\//u;
+const MONGO_RSEQ_WORKAROUND =
+  /^\s+GLIBC_TUNABLES:\s*glibc\.pthread\.rseq=1\s*$/mu;
 
 const envEntries = ENV_EXAMPLE.split("\n").flatMap((line) => {
   const groups = ENV_LINE.exec(line.trim())?.groups;
@@ -195,5 +197,14 @@ describe("docker-compose.yml", () => {
   // lives in idempotent healthchecks instead.
   it.each(serviceCases)("%s is not a one-shot job", (_serviceName, body) => {
     expect(body).not.toMatch(ONE_SHOT_RESTART);
+  });
+
+  // Kernels 6.19 → 7.0.13 (Ubuntu 26.04 CI runners) crash mongod 8.x with the
+  // image's default `rseq=0`; it shows up as "container ... is unhealthy".
+  it("mongodb works around the TCMalloc/rseq kernel crash", () => {
+    const mongodb = services.find(
+      ({ serviceName }) => serviceName === "mongodb"
+    );
+    expect(mongodb?.body).toMatch(MONGO_RSEQ_WORKAROUND);
   });
 });

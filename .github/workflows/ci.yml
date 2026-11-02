@@ -1,0 +1,79 @@
+# CI — runs the same checks as the local workflow (docs/workflow.md, DoD).
+#
+#   verify       -> pnpm verify (lint + typecheck + arch:check + test:unit)
+#   integration  -> compose profile `core` + test:int + test:e2e
+#
+# Integration uses docker-compose.yml instead of `services:` to keep parity
+# with local infra (ADR-0011): same images, healthchecks and Mongo replica set.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+# A new push to the same PR (or branch) cancels the run in progress.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Version comes from `packageManager` in package.json.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm verify
+
+  integration:
+    name: integration
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Compose reads `.env` for APP_SLUG and ports; tests read the same values.
+      - run: cp .env.example .env
+
+      # Add `--profile messaging` here once tests need Kafka/Schema Registry.
+      - name: Start infra (profile core)
+        run: pnpm infra:up
+
+      - run: pnpm test:int
+
+      - run: pnpm test:e2e
+
+      - name: Dump infra logs
+        if: failure()
+        run: |
+          docker compose --profile core ps --all
+          docker compose --profile core logs --no-color

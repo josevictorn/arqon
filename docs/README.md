@@ -30,6 +30,7 @@
 | [09-observability.md](./architecture/09-observability.md) | Logs, traces, métricas, health |
 | [10-testing.md](./architecture/10-testing.md) | Níveis de teste |
 | [11-code-quality.md](./architecture/11-code-quality.md) | Biome, Lefthook, Docker Compose |
+| [12-ci.md](./architecture/12-ci.md) | Pipeline de CI (GitHub Actions) e Dependabot |
 
 ## Manutenção
 
