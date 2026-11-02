@@ -5,6 +5,7 @@
   "description": "SaaS boilerplate: NestJS + Fastify, DDD and polyglot CQRS",
   "license": "UNLICENSED",
   "scripts": {
+    "arch:check": "depcruise src --config .dependency-cruiser.cjs --output-type err-long",
     "build": "nest build",
     "commitlint": "commitlint",
     "dev": "nest start --watch",
@@ -19,7 +20,7 @@
     "test:int": "vitest run --project int --passWithNoTests",
     "test:unit": "vitest run --project unit",
     "typecheck": "tsc --noEmit",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test:unit"
+    "verify": "pnpm lint && pnpm typecheck && pnpm arch:check && pnpm test:unit"
   },
   "dependencies": {
     "@nestjs/common": "11.2.8",
@@ -41,6 +42,7 @@
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.0.5",
     "chokidar": "5.0.0",
+    "dependency-cruiser": "18.6.0",
     "lefthook": "2.2.2",
     "typescript": "5.9.3",
     "ultracite": "8.1.0",

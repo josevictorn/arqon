@@ -1,6 +1,9 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/biome/core", "ultracite/biome/nestjs"],
+  "files": {
+    "includes": ["!!test/architecture/fixtures"]
+  },
   "javascript": {
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
