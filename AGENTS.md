@@ -49,6 +49,7 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 | Regras de arquitetura | `pnpm arch:check` |
 | Testes unit / int / e2e | `pnpm test:unit` / `pnpm test:int` / `pnpm test:e2e` |
 | Verificação completa (antes do PR) | `pnpm verify` |
+| Rodar hooks manualmente | `pnpm lefthook run pre-commit` / `pre-push` · `echo "msg" \| pnpm commitlint` |
 
 ## Onde está cada coisa
 

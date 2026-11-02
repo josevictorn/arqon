@@ -1,0 +1,23 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: "*.{js,ts,json,jsonc,md}"
+      run: pnpm exec biome check --write --staged --no-errors-on-unmatched
+      stage_fixed: true
+    typecheck:
+      run: pnpm exec tsc --noEmit
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
+
+pre-push:
+  commands:
+    test-related:
+      glob: "*.{js,ts}"
+      run: pnpm exec vitest related --run --passWithNoTests --project unit {push_files}
+    # Enable when T1.05 adds the `arch:check` script:
+    # arch-check:
+    #   run: pnpm arch:check
