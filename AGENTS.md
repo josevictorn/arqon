@@ -29,6 +29,12 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 - Commands escrevem no Postgres via `UnitOfWork` + Outbox. Queries leem **só** do MongoDB/Redis. Ninguém publica no Kafka diretamente.
 - Todo projector/consumer é idempotente (ver ADR-0008).
 - Toda chamada externa fica em `src/integrations/` atrás de Gateway + ACL + policy de resiliência.
+- IDs de entidades, agregados e eventos são **UUIDv7 gerados no domínio** (`UniqueEntityID`); nunca `autoincrement`, `uuid()` do banco ou UUIDv4 (ADR-0014).
+- JWT só com **EdDSA (Ed25519) via `jose`**, atrás de `TokenEncrypterGateway`; o refresh token é opaco, nunca JWT. Proibido `HS256`/`RS256` (ADR-0015).
+- O tenant ativo vem **por requisição** (`:orgId` ou header `X-Organization-Id`, validado no Redis pelo Guard); nunca do JWT nem do body (ADR-0016).
+- Isolamento multi-tenant em 3 camadas: Guard + CASL, `organizationId` explícito em todo `where` de repositório e PostgreSQL RLS via `set_config('app.current_tenant_id', …, true)` (equivale a `SET LOCAL`) aplicado pelo `UnitOfWork` (ADR-0017).
+- `IntegrationEvent` segue o envelope do ADR-0019; `eventId`, `tenantId`, `correlationId`, `traceparent` e `actor` são preenchidos via `AsyncLocalStorage`, nunca à mão.
+- Contratos de evento nascem em Zod (`defineIntegrationEventContract`) e são a fonte única do JSON Schema no Schema Registry; mudança não `BACKWARD` = nova versão do tópico (ADR-0020).
 - Erros de domínio têm `code` + `i18nKey`; nada de mensagens hardcoded. Toda chave existe em `en` **e** `pt-BR`.
 - Logs `info`/`warn`/`error` vivem **só nas fronteiras** (Canonical Log Lines em HTTP, Kafka e Circuit Breakers — ver ADR-0013). Em Use Cases, use apenas `LoggerPort.debug()` ou `LogContextPort.set()`. Proibido *log-and-rethrow* e stack trace em erros 4xx de negócio.
 - Nunca hardcode `arqon` ou `arqon-boilerplate` em `src/`; use variáveis de ambiente (`APP_NAME`, `APP_SLUG`) para permitir inicialização limpa de novos projetos (ver ADR-0012).
@@ -38,18 +44,32 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 
 ## Comandos
 
-> Disponíveis após a Fase 1. Até lá, a T1.08 atualiza esta seção com os comandos reais.
+Todos são scripts reais do `package.json` (garantido por `test/infra/agents-md.spec.ts`).
 
 | Objetivo | Comando |
 |---|---|
 | Instalar | `pnpm install` |
-| Subir infra (core) | `docker compose --profile core up -d` |
-| Lint + format | `pnpm lint` / `pnpm lint:fix` |
+| Rodar a API em watch / build / produção | `pnpm dev` / `pnpm build` / `pnpm start` |
+| Subir infra `core` (Postgres, Mongo, Redis) / todos os profiles | `pnpm infra:up` / `pnpm infra:up:full` |
+| Parar infra (mantém volumes) / parar e **apagar** volumes | `pnpm infra:down` / `pnpm infra:reset` |
+| Lint + format (checar / corrigir / só formatar) | `pnpm lint` / `pnpm lint:fix` / `pnpm format` |
 | Typecheck | `pnpm typecheck` |
-| Regras de arquitetura | `pnpm arch:check` |
-| Testes unit / int / e2e | `pnpm test:unit` / `pnpm test:int` / `pnpm test:e2e` |
-| Verificação completa (antes do PR) | `pnpm verify` |
-| Rodar hooks manualmente | `pnpm lefthook run pre-commit` / `pre-push` · `echo "msg" \| pnpm commitlint` |
+| Regras de arquitetura (ADR-0010) | `pnpm arch:check` |
+| Testes unit / int / e2e / todos | `pnpm test:unit` / `pnpm test:int` / `pnpm test:e2e` / `pnpm test` |
+| Cobertura (unit) | `pnpm test:cov` |
+| Verificação completa (antes do PR) = lint + typecheck + arch + unit | `pnpm verify` |
+| Rodar hooks manualmente | `pnpm lefthook run pre-commit` / `pnpm lefthook run pre-push` · `echo "msg" \| pnpm commitlint` |
+
+`test:int` e `test:e2e` exigem `pnpm infra:up` (o CI faz o mesmo com o profile `core`).
+
+## Armadilhas conhecidas
+
+- **`import type` quebra a DI do Nest.** A regra `useImportType` do Biome está desligada de propósito: classes injetadas pelo construtor precisam de import de valor para o `design:paramtypes` existir. Não converta para `import type`.
+- **Vitest sem SWC = DI quebrada em silêncio.** O esbuild não emite metadata de decorators; os testes compilam via `unplugin-swc` (`vitest.config.mts`). Não troque o transformer.
+- **Onde fica cada teste:** unit `src/**/*.spec.ts`, integração `src/**/*.int-spec.ts`, e2e `test/**/*.e2e-spec.ts`. Fora desses globs o teste não roda.
+- **`test/architecture/fixtures/` viola as regras de propósito** (prova o `arch:check`) e é excluído de Biome, `tsc` e dependency-cruiser. Não "conserte" nem importe esses arquivos.
+- **MongoDB 8 não sobe em kernel Linux `6.19`–`7.0.13`** (Docker Desktop antigo). Veja "Troubleshooting" no [README](./README.md).
+- **Regras por pasta:** `src/shared/core`, `src/modules`, `src/integrations` e `test` têm `AGENTS.md` próprio (com symlinks `CLAUDE.md`/`GEMINI.md`). Leia o da pasta que vai editar.
 
 ## Onde está cada coisa
 

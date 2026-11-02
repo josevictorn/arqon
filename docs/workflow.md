@@ -53,10 +53,10 @@ Merge → ROADMAP atualizado → ADRs com status final → skills/docs atualizad
 
 Uma task só está pronta quando **todos** os itens valem:
 
-1. `pnpm verify` passa (lint, typecheck, arch:check, testes unit; int/e2e quando a task tocar infra).
+1. `pnpm verify` passa (lint, typecheck, arch:check, testes unit; `pnpm infra:up` + `test:int`/`test:e2e` quando a task tocar infra ou endpoints — o CI roda os dois com o profile `core`).
 2. Cada critério de aceite da task está atendido e marcado.
 3. Testes novos cobrem o comportamento (domínio: unit; repositórios/projectors: integração; endpoints: e2e).
-4. Nenhuma regra do `AGENTS.md` violada; nenhuma exceção nova de lint/arquitetura sem ADR.
+4. Nenhuma regra do `AGENTS.md` (raiz e o aninhado da pasta tocada) violada; nenhuma exceção nova de lint/arquitetura sem ADR.
 5. Se houve decisão: ADR criado e índice atualizado.
 6. Se algo mudou: spec do módulo, [catálogo de eventos](./events/catalog.md), [glossário](./glossary.md), chaves i18n (`en` + `pt-BR`), skills e `AGENTS.md` atualizados.
 7. `docs/roadmap/ROADMAP.md` com status atualizado e link do PR.
@@ -67,7 +67,7 @@ Uma task só está pronta quando **todos** os itens valem:
 - **Contexto mínimo e explícito.** A task lista os docs necessários; o agente não lê "tudo".
 - **Exemplo > descrição.** A partir da Fase 6, aponte para código de referência real (`src/modules/iam/...`).
 - **Enforcement > documentação.** Se uma regra foi violada duas vezes, ela deve virar regra de lint/arquitetura/teste.
-- **Feedback vira conhecimento.** Corrigiu o agente em review? Atualize o `AGENTS.md`, a skill ou o doc no mesmo PR para não repetir o erro.
+- **Feedback vira conhecimento.** Corrigiu o agente em review? Atualize o `AGENTS.md` (regra global na raiz; regra de uma camada no aninhado da pasta, ≤ 30 linhas), a skill ou o doc no mesmo PR para não repetir o erro.
 - **Decisões nunca ficam só no chat.** Se foi decidido conversando, vira ADR.
 
 ## Convenções de Git
