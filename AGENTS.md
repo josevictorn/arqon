@@ -37,7 +37,7 @@ Boilerplate SaaS em **NestJS + Fastify** com DDD, Clean/Hexagonal Architecture e
 - Contratos de evento nascem em Zod (`defineIntegrationEventContract`) e são a fonte única do JSON Schema no Schema Registry; mudança não `BACKWARD` = nova versão do tópico (ADR-0020).
 - Erros de domínio têm `code` + `i18nKey`; nada de mensagens hardcoded. Toda chave existe em `en` **e** `pt-BR`.
 - Logs `info`/`warn`/`error` vivem **só nas fronteiras** (Canonical Log Lines em HTTP, Kafka e Circuit Breakers — ver ADR-0013). Em Use Cases, use apenas `LoggerPort.debug()` ou `LogContextPort.set()`. Proibido *log-and-rethrow* e stack trace em erros 4xx de negócio.
-- Nunca hardcode `arqon` ou `arqon-boilerplate` em `src/`; use variáveis de ambiente (`APP_NAME`, `APP_SLUG`) para permitir inicialização limpa de novos projetos (ver ADR-0012).
+- Nunca hardcode o nome do projeto (`arqon`) em `src/`; use variáveis de ambiente (`APP_NAME`, `APP_SLUG`) para permitir inicialização limpa de novos projetos (ver ADR-0012).
 - Proibido: `any` explícito, `console.log` em `src/`, `// @ts-ignore`, `biome-ignore` sem justificativa, desabilitar testes.
 - **Nunca faça `git commit` ou `git push`:** deixe todas as alterações na working tree para revisão e commit manual do humano.
 - Código, identificadores e mensagens de commit sugeridas em **inglês**. Docs e ADRs em **português**.
@@ -58,6 +58,7 @@ Todos são scripts reais do `package.json` (garantido por `test/infra/agents-md.
 | Testes unit / int / e2e / todos | `pnpm test:unit` / `pnpm test:int` / `pnpm test:e2e` / `pnpm test` |
 | Cobertura (unit) | `pnpm test:cov` |
 | Verificação completa (antes do PR) = lint + typecheck + arch + unit | `pnpm verify` |
+| Inicializar um novo projeto a partir do boilerplate (ADR-0012) | `pnpm init:project --name <slug>` |
 | Rodar hooks manualmente | `pnpm lefthook run pre-commit` / `pnpm lefthook run pre-push` · `echo "msg" \| pnpm commitlint` |
 
 `test:int` e `test:e2e` exigem `pnpm infra:up` (o CI faz o mesmo com o profile `core`).

@@ -45,6 +45,7 @@ export default defineConfig({
           "src/**/*.spec.ts",
           "test/architecture/**/*.spec.ts",
           "test/infra/**/*.spec.ts",
+          "test/scripts/**/*.spec.ts",
         ],
         "./test/setup-unit.ts"
       ),
