@@ -11,8 +11,13 @@
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "start": "node dist/main.js",
+    "test": "vitest run",
+    "test:cov": "vitest run --project unit --coverage",
+    "test:e2e": "vitest run --project e2e",
+    "test:int": "vitest run --project int --passWithNoTests",
+    "test:unit": "vitest run --project unit",
     "typecheck": "tsc --noEmit",
-    "verify": "pnpm lint && pnpm typecheck"
+    "verify": "pnpm lint && pnpm typecheck && pnpm test:unit"
   },
   "dependencies": {
     "@nestjs/common": "11.2.8",
@@ -24,13 +29,18 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
+    "@faker-js/faker": "10.6.0",
     "@nestjs/cli": "11.0.24",
+    "@nestjs/testing": "11.2.8",
     "@swc/cli": "0.8.2",
     "@swc/core": "1.16.21",
     "@types/node": "24.19.2",
+    "@vitest/coverage-v8": "5.0.5",
     "chokidar": "5.0.0",
     "typescript": "5.9.3",
-    "ultracite": "8.1.0"
+    "ultracite": "8.1.0",
+    "unplugin-swc": "2.0.0",
+    "vitest": "5.0.5"
   },
   "packageManager": "pnpm@11.24.0",
   "engines": {
