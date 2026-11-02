@@ -4,16 +4,15 @@
   "private": true,
   "description": "SaaS boilerplate: NestJS + Fastify, DDD and polyglot CQRS",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@11.24.0",
-  "engines": {
-    "node": ">=24 <25"
-  },
   "scripts": {
-    "dev": "nest start --watch",
     "build": "nest build",
+    "dev": "nest start --watch",
+    "format": "biome format --write",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
-    "verify": "pnpm typecheck"
+    "verify": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
     "@nestjs/common": "11.2.8",
@@ -24,11 +23,17 @@
     "rxjs": "7.8.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.4",
     "@nestjs/cli": "11.0.24",
     "@swc/cli": "0.8.2",
     "@swc/core": "1.16.21",
     "@types/node": "24.19.2",
     "chokidar": "5.0.0",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "ultracite": "8.1.0"
+  },
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=24 <25"
   }
 }

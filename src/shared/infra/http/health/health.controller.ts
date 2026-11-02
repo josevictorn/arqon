@@ -1,14 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
 
 export interface LiveResponse {
-  status: 'ok';
+  status: "ok";
 }
 
-@Controller('health')
+@Controller("health")
 export class HealthController {
-  @Get('live')
+  @Get("live")
   live(): LiveResponse {
-    return { status: 'ok' };
+    return { status: "ok" };
   }
 }
-
