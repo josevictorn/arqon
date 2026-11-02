@@ -41,7 +41,11 @@ export default defineConfig({
     projects: [
       createProject(
         "unit",
-        ["src/**/*.spec.ts", "test/architecture/**/*.spec.ts"],
+        [
+          "src/**/*.spec.ts",
+          "test/architecture/**/*.spec.ts",
+          "test/infra/**/*.spec.ts",
+        ],
         "./test/setup-unit.ts"
       ),
       createProject(

@@ -50,7 +50,7 @@ flowchart LR
 | [T1.03](./tasks/T1.03-vitest-setup.md) | Vitest + SWC: projetos unit / int / e2e + setups | T1.01 | 0003 | ✅ |
 | [T1.04](./tasks/T1.04-lefthook-commitlint.md) | Lefthook (pre-commit, commit-msg, pre-push) + Conventional Commits | T1.02, T1.03 | — | ✅ |
 | [T1.05](./tasks/T1.05-architecture-enforcement.md) | dependency-cruiser com as regras de camadas/módulos + `pnpm arch:check` | T1.01 | 0010 | ✅ |
-| [T1.06](./tasks/T1.06-docker-compose.md) | Docker Compose com profiles e healthchecks + `.env.example` completo | T1.01 | 0003, 0004, 0006, 0011, 0012, 0013, 0015, 0020 | 📝 |
+| [T1.06](./tasks/T1.06-docker-compose.md) | Docker Compose com profiles e healthchecks + `.env.example` completo | T1.01 | 0003, 0004, 0006, 0011, 0012, 0013, 0015, 0020, 0021 | 👀 |
 | [T1.07](./tasks/T1.07-ci-pipeline.md) | CI (GitHub Actions): `verify` + int/e2e com services | T1.02–T1.06 | — | 📝 |
 | [T1.08](./tasks/T1.08-agents-md-refresh.md) | Atualizar comandos reais no AGENTS.md + AGENTS.md aninhados por camada (ADRs 0001–0020) | T1.07 | 0002, 0014–0020 | 📝 |
 | [T1.09](./tasks/T1.09-project-initializer.md) | Script de inicialização de novo projeto (`pnpm init:project`): renomeação, `.env` + chaves `Ed25519` e `MFA_ENCRYPTION_KEY` + reset do roadmap | T1.06, T1.08 | 0012, 0015 | 📝 |
@@ -105,7 +105,7 @@ flowchart LR
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
 | T5.01 | `Argon2Hasher` + `JwtEncrypter` (`EdDSA`/`Ed25519` via `jose`) + `AesGcmCipher` (MFA) | F3 | 0015 | ☐ |
-| T5.02 | `S3StorageAdapter` (MinIO) + presigned URLs + `FakeStorage` | T3.10 | 0005 | ☐ |
+| T5.02 | `S3StorageAdapter` (S3-compatible; RustFS local, `forcePathStyle` via `S3_FORCE_PATH_STYLE`) + presigned URLs + `FakeStorage` | T3.10 | 0005, 0021 | ☐ |
 | T5.03 | `NodemailerAdapter` (Mailpit) + templates i18n + `FakeMail` | T3.10, T3.03 | 0005 | ☐ |
 | T5.04 | Payment: contrato + factory + Stripe adapter + ACL + `FakePaymentGateway` | T3.10 | 0005 | ☐ |
 | T5.05 | Asaas adapter + ACL + resolução explícita do provedor na Factory | T5.04 | 0005 | ☐ |

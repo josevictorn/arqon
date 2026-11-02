@@ -1,0 +1,218 @@
+# Local infrastructure — ADR-0011 (profiles) + ADR-0021 (Redpanda, RustFS).
+#
+#   pnpm infra:up        -> profile `core` (postgres, mongodb, redis)
+#   pnpm infra:up:full   -> profile `full` (everything)
+#   docker compose --profile messaging up -d --wait   (any single profile)
+#
+# The project name comes from APP_SLUG (ADR-0012), so volumes and containers
+# are prefixed per project. Host ports are overridable via *_PORT vars in .env
+# so several projects derived from the boilerplate can run side by side.
+name: ${APP_SLUG:-arqon}
+
+services:
+  # ─── core ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17.11-alpine
+    profiles: [ core, full ]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-${APP_SLUG:-arqon}}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  mongodb:
+    image: mongo:8.0.34
+    profiles: [ core, full ]
+    restart: unless-stopped
+    # Single-node replica set: required for multi-document transactions and
+    # change streams. The healthcheck initiates it on first boot (idempotent).
+    command: [ "mongod", "--replSet", "rs0", "--bind_ip_all" ]
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+      - ./docker/mongo/init-replica-set.js:/docker/init-replica-set.js:ro
+    healthcheck:
+      test: [ "CMD", "mongosh", "--quiet", "/docker/init-replica-set.js" ]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+
+  redis:
+    image: valkey/valkey:8.1.11-alpine
+    profiles: [ core, full ]
+    restart: unless-stopped
+    command: [ "valkey-server", "--appendonly", "yes" ]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "valkey-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── messaging ───────────────────────────────────────────────────────────
+  # Kafka API + Confluent-compatible Schema Registry in one binary (ADR-0021).
+  #   - host clients:      localhost:${KAFKA_PORT}  (external listener)
+  #   - other containers:  redpanda:29092           (internal listener)
+  redpanda:
+    image: redpandadata/redpanda:v26.2.6
+    profiles: [ messaging, full ]
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --mode=dev-container
+      - --smp=1
+      - --memory=1G
+      - --default-log-level=warn
+      - --kafka-addr=internal://0.0.0.0:29092,external://0.0.0.0:9092
+      - --advertise-kafka-addr=internal://redpanda:29092,external://localhost:${KAFKA_PORT:-9092}
+      - --schema-registry-addr=0.0.0.0:8081
+      - --rpc-addr=redpanda:33145
+      - --advertise-rpc-addr=redpanda:33145
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+      - "${SCHEMA_REGISTRY_PORT:-8081}:8081"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "rpk cluster health | grep -Eq 'Healthy:.+true' && curl -fsS http://localhost:8081/subjects > /dev/null",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+
+  redpanda-console:
+    image: redpandadata/console:v3.13.1
+    profiles: [ messaging, full ]
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKERS: redpanda:29092
+      SCHEMAREGISTRY_ENABLED: "true"
+      SCHEMAREGISTRY_URLS: http://redpanda:8081
+    ports:
+      - "${REDPANDA_CONSOLE_PORT:-8080}:8080"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "-q",
+          "--spider",
+          "http://localhost:8080/admin/health",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  # ─── mail-storage ────────────────────────────────────────────────────────
+  mailpit:
+    image: axllent/mailpit:v1.33.0
+    profiles: [ mail-storage, full ]
+    restart: unless-stopped
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+    ports:
+      - "${SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+    volumes:
+      - mailpit-data:/data
+    healthcheck:
+      test: [ "CMD", "/mailpit", "readyz" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # S3-compatible object storage (replaces MinIO — ADR-0021).
+  rustfs:
+    image: rustfs/rustfs:1.0.4
+    profiles: [ mail-storage, full ]
+    restart: unless-stopped
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:-rustfsadmin}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:-rustfsadmin}
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_REGION: ${S3_REGION:-us-east-1}
+      # Read by the healthcheck, which creates the bucket on first run.
+      S3_BUCKET: ${S3_BUCKET:-${APP_SLUG:-arqon}-files}
+    ports:
+      - "${S3_PORT:-9000}:9000"
+      - "${S3_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - rustfs-data:/data
+      - ./docker/storage/ensure-bucket.sh:/docker/ensure-bucket.sh:ro
+    # Healthy = API up AND bucket S3_BUCKET exists (no one-shot job: see script).
+    healthcheck:
+      test: [ "CMD", "sh", "/docker/ensure-bucket.sh" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
+
+  # ─── observability ───────────────────────────────────────────────────────
+  # OTel Collector + Loki + Tempo + Prometheus + Grafana (ADR-0006).
+  otel-lgtm:
+    image: grafana/otel-lgtm:0.39.0
+    profiles: [ observability, full ]
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+      - "${OTLP_GRPC_PORT:-4317}:4317"
+      - "${OTLP_HTTP_PORT:-4318}:4318"
+    volumes:
+      - otel-lgtm-data:/data
+      - ./docker/grafana/provisioning/dashboards/app.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/app.yaml:ro
+      - ./docker/grafana/dashboards:/otel-lgtm/app-dashboards:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "test -f /tmp/ready && curl -fsS http://localhost:3000/api/health > /dev/null",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+volumes:
+  postgres-data:
+  mongodb-data:
+  mongodb-config:
+  redis-data:
+  redpanda-data:
+  mailpit-data:
+  rustfs-data:
+  otel-lgtm-data:

@@ -1,6 +1,6 @@
 # ADR-0011: Escopo da infraestrutura local (Docker Compose)
 
-- **Status:** Aceito
+- **Status:** Aceito — parcialmente substituído por [ADR-0021](./0021-redpanda-e-rustfs-na-infra-local.md) (Redpanda em `messaging` e RustFS no lugar do MinIO em `mail-storage`)
 - **Data:** 2026-10-31
 - **Decisores:** José Victor
 - **Tasks relacionadas:** T1.06, T3.11

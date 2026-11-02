@@ -20,7 +20,7 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0008](./0008-idempotencia-de-consumers.md) | Idempotência co-localizada com o efeito (`BaseProjector` no Mongo + `processed_events` no PG) | ✅ Aceito | — | 2026-10-31 |
 | [0009](./0009-domain-events-e-unit-of-work.md) | `UnitOfWork` com `AsyncLocalStorage` + Domain Events na tx + `addIntegrationEvent` no Outbox | ✅ Aceito | — | 2026-10-31 |
 | [0010](./0010-enforcement-de-arquitetura.md) | Enforcement automático de arquitetura (`dependency-cruiser` + testes) | ✅ Aceito | — | 2026-10-31 |
-| [0011](./0011-infraestrutura-local.md) | Infraestrutura local: Docker Compose com profiles (`core`, `messaging`, `mail-storage`, `observability`, `full`) | ✅ Aceito | — | 2026-10-31 |
+| [0011](./0011-infraestrutura-local.md) | Infraestrutura local: Docker Compose com profiles (`core`, `messaging`, `mail-storage`, `observability`, `full`) | ✅ Aceito (♻️ parcialmente por 0021) | — | 2026-10-31 |
 | [0012](./0012-inicializacao-de-novos-projetos.md) | Inicialização de novos projetos (`create-arqon-app` + `pnpm init:project`) | ✅ Aceito | — | 2026-11-01 |
 | [0013](./0013-estrategia-de-logging-canonical-logs-e-custo.md) | Estratégia de logging: Canonical Log Lines (Wide Events), taxonomia e controle de custo | ✅ Aceito | — | 2026-11-01 |
 | [0014](./0014-identificadores-uuidv7.md) | Padronizar identificadores com UUIDv7 gerados no domínio (`UniqueEntityID`) | ✅ Aceito | — | 2026-11-01 |
@@ -30,6 +30,7 @@ Este é o **lugar único** para entender *por que* o boilerplate é como é. Lei
 | [0018](./0018-taxonomia-eventos-billing-e-catalogo-planos.md) | Taxonomia de eventos do `billing` (`invoice.paid` + `subscription.updated`) e catálogo `FREE` + `FLAT_RATE` extensível | ✅ Aceito | — | 2026-11-01 |
 | [0019](./0019-envelope-integration-event.md) | Envelope padronizado de `IntegrationEvent` preenchido via `AsyncLocalStorage` | ✅ Aceito | — | 2026-11-01 |
 | [0020](./0020-schema-registry-json-schema.md) | Schema Registry com JSON Schema gerado automaticamente a partir dos contratos Zod | ✅ Aceito | — | 2026-11-01 |
+| [0021](./0021-redpanda-e-rustfs-na-infra-local.md) | Infra local: Redpanda (Kafka API + Schema Registry) e RustFS (S3) no lugar de Kafka + Schema Registry separados e MinIO | ✅ Aceito | — | 2026-11-02 |
 
 Legenda: ✅ Aceito · ⏳ Proposto · ❌ Rejeitado · ♻️ Substituído
 

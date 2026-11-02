@@ -1,0 +1,13 @@
+# Grafana provisioning for the application dashboards (ADR-0006).
+# Mounted into grafana/otel-lgtm next to its built-in providers.
+apiVersion: 1
+
+providers:
+  - name: "Application"
+    folder: "Application"
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    options:
+      path: /otel-lgtm/app-dashboards
+      foldersFromFilesStructure: false

@@ -19,5 +19,5 @@
 | **Storage** | `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner` | Abstração de Object Storage (AWS S3 / Cloudflare R2 / MinIO) com suporte a Presigned URLs. |
 | **Testes** | **Vitest** + `supertest` + `@faker-js/faker` | Testes Unitários (In-Memory), Integração e E2E com schemas isolados no PostgreSQL e databases isolados no MongoDB por worker. |
 | **Code Quality & Git** | **Biome** + **Ultracite** + **Lefthook** | Linter/Formatter ultra-rápido em Rust (Biome + preset Ultracite) e Git Hooks automatizados (Lefthook). |
-| **Infra Dev** | **Docker** & **Docker Compose** | Orquestração local de PostgreSQL, MongoDB, Redis, Kafka (KRaft) + Schema Registr, Mailpit, MinIO e OpenTelemetry Collector. |
+| **Infra Dev** | **Docker** & **Docker Compose** | Orquestração local de PostgreSQL, MongoDB, Valkey (Redis), Redpanda (Kafka API + Schema Registry), Mailpit, RustFS (S3) e `grafana/otel-lgtm` ([ADR-0011](../decisions/0011-infraestrutura-local.md), [ADR-0021](../decisions/0021-redpanda-e-rustfs-na-infra-local.md)). |
 
