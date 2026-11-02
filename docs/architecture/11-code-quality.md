@@ -9,6 +9,7 @@
    - `pre-commit`: Executa `npx @biomejs/biome check --write --staged` e `tsc --noEmit` em paralelo.
    - `commit-msg`: Valida Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`).
    - `pre-push`: Executa `vitest related --run` (roda os testes unitários dos arquivos modificados).
+   - Os hooks são um subconjunto rápido; a checagem completa e obrigatória roda no CI — ver [12-ci.md](./12-ci.md).
 3. **Docker Compose (`docker-compose.yml` — organizado em profiles conforme [ADR-0011](../decisions/0011-infraestrutura-local.md) e [ADR-0021](../decisions/0021-redpanda-e-rustfs-na-infra-local.md))**:
    - `postgres`: PostgreSQL 17 Alpine (Write DB — Commands & Outbox — profile `core`).
    - `mongodb`: MongoDB 8 em replica set de 1 nó (Read DB — CQRS Views & Projections — profile `core`).
