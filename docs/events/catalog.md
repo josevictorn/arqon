@@ -8,6 +8,7 @@ Fonte única de **quais eventos existem, quem produz e quem consome**. Toda task
 - **Contrato (schema Zod + JSON Schema Registry):** `src/shared/contracts/events/<ctx>/<aggregate>-<action>.v<N>.event.ts`. Ver [ADR-0020](../decisions/0020-schema-registry-json-schema.md).
 - **Envelope:** `IntegrationEventEnvelope<TPayload>` (`eventId` UUIDv7, `eventName`, `schemaVersion`, `aggregateId`, `aggregateVersion`, `occurredAt`, `tenantId`, `correlationId`, `traceparent`, `actor`, `payload`). Ver [ADR-0019](../decisions/0019-envelope-integration-event.md).
 - **Breaking change** → nova versão (`v2`), publicando `v1` e `v2` em paralelo durante a transição.
+- **`schemaVersion`** → revisão compatível dentro do tópico: começa em `1`, sobe `+1` a cada mudança `BACKWARD` compatível (ex.: campo opcional novo) e recomeça em `1` em cada novo `.vN`. Ver [ADR-0023](../decisions/0023-semantica-de-schema-version.md).
 
 ## Eventos
 

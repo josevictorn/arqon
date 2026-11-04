@@ -20,8 +20,8 @@ saas-boilerplate/
 │   │   │   │   └── unique-entity-id.ts
 │   │   │   ├── events/
 │   │   │   │   ├── domain-event.ts              # Eventos internos em memória (mesmo módulo)
-│   │   │   │   ├── domain-events.ts
-│   │   │   │   └── integration-event.ts         # Contrato base de evento versionado p/ Outbox/Kafka
+│   │   │   │   ├── domain-event-dispatcher.ts   # Dispatcher de instância (ADR-0025)
+│   │   │   │   └── integration-event.ts         # Tipo do envelope (TS puro, sem Zod) + ACTOR_TYPES (ADR-0019, ADR-0024)
 │   │   │   ├── logic/
 │   │   │   │   └── either.ts                    # Left / Right para retorno funcional de Use Cases
 │   │   │   └── errors/
@@ -33,7 +33,9 @@ saas-boilerplate/
 │   │   │   │   ├── iam.facade.contract.ts
 │   │   │   │   ├── tenancy.facade.contract.ts
 │   │   │   │   └── billing.facade.contract.ts
-│   │   │   └── events/                          # Schemas & Tipagens de Integration Events (v1, v2)
+│   │   │   └── events/                          # Schemas & Tipagens de Integration Events (v1, v2) — único lugar com Zod de eventos (ADR-0024)
+│   │   │       ├── integration-event-envelope.schema.ts  # Schema Zod do envelope (equivalente ao tipo em core/events)
+│   │   │       ├── define-integration-event-contract.ts  # Helper defineIntegrationEventContract (ADR-0020)
 │   │   │       ├── tenancy/
 │   │   │       │   └── member-invited.v1.event.ts
 │   │   │       └── billing/

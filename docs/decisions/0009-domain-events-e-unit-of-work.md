@@ -1,6 +1,6 @@
 # ADR-0009: Dispatch de Domain Events e UnitOfWork com Prisma
 
-- **Status:** Aceito
+- **Status:** Aceito — complementado por [ADR-0025](./0025-dispatcher-de-domain-events-por-instancia.md) (dispatcher de instância no lugar do `DomainEvents` estático)
 - **Data:** 2026-10-31
 - **Decisores:** José Victor
 - **Tasks relacionadas:** T2.03, T3.05

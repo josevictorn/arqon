@@ -158,7 +158,7 @@ Utilizamos dois níveis de eventos com responsabilidades distintas:
 
 | Tipo de Evento | Escopo | Transporte | Quando usar? |
 | :--- | :--- | :--- | :--- |
-| **1. Domain Event** | **Intra-módulo** (Dentro do mesmo Bounded Context) | Em memória (`DomainEvents.dispatchEventsForAggregate`) dentro da mesma transação do PostgreSQL. | Quando uma alteração em um Agregado precisa acionar uma regra imediata no **mesmo módulo** na mesma transação ACID. |
+| **1. Domain Event** | **Intra-módulo** (Dentro do mesmo Bounded Context) | Em memória: o agregado guarda os eventos e o `UnitOfWork` os entrega via `DomainEventDispatcher` (instância, sem estado global — ver [ADR-0025](../decisions/0025-dispatcher-de-domain-events-por-instancia.md)) dentro da mesma transação do PostgreSQL. | Quando uma alteração em um Agregado precisa acionar uma regra imediata no **mesmo módulo** na mesma transação ACID. |
 | **2. Integration Event** | **Inter-módulos**, **Projectors MongoDB** e **Sistemas Externos** | **Tabela Outbox (PostgreSQL)** → **Outbox Relay Worker** → **Apache Kafka** (com Schema Registry). | Para alimentar os **Projectors do MongoDB (CQRS Read Side)** e acionar outros módulos (`notifications`, `audit`, `billing`) de forma desacoplada e resiliente. |
 
 ### Fluxo de Resiliência do Transactional Outbox + Kafka + DLQ
@@ -202,5 +202,6 @@ sequenceDiagram
 ### Versionamento de Eventos e Schema Registry
 - Todo tópico segue a convenção: `<bounded-context>.<aggregate>.<action>.v<version>` (ex: `billing.subscription.paid.v1`).
 - Mudanças quebradoras (*breaking changes*) no contrato do evento exigem a criação de uma nova versão (`v2`), mantendo o publicador emitindo `v1` e `v2` durante o período de transição.
+- Mudanças compatíveis (`BACKWARD`) ficam no mesmo tópico e incrementam o campo `schemaVersion` do envelope, que recomeça em `1` a cada novo `.vN` (ver [ADR-0023](../decisions/0023-semantica-de-schema-version.md)).
 - Todo consumidor e projector implementa **Idempotência** verificando o `eventId` (UUIDv7) antes de aplicar efeitos colaterais.
 

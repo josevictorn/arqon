@@ -57,7 +57,7 @@ Todos são scripts reais do `package.json` (garantido por `test/infra/agents-md.
 | Regras de arquitetura (ADR-0010) | `pnpm arch:check` |
 | Testes unit / int / e2e / todos | `pnpm test:unit` / `pnpm test:int` / `pnpm test:e2e` / `pnpm test` |
 | Cobertura (unit) | `pnpm test:cov` |
-| Verificação completa (antes do PR) = lint + typecheck + arch + unit | `pnpm verify` |
+| Verificação completa (antes do PR) = lint + typecheck + arch + cov (100% em core) | `pnpm verify` |
 | Inicializar um novo projeto a partir do boilerplate (ADR-0012) | `pnpm init:project --name <slug>` |
 | Rodar hooks manualmente | `pnpm lefthook run pre-commit` / `pnpm lefthook run pre-push` · `echo "msg" \| pnpm commitlint` |
 

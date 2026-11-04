@@ -1,6 +1,6 @@
 # ADR-0019: Envelope padronizado de `IntegrationEvent` preenchido via `AsyncLocalStorage`
 
-- **Status:** Aceito
+- **Status:** Aceito — complementado por [ADR-0023](./0023-semantica-de-schema-version.md) (semântica de `schemaVersion` × sufixo `.vN`)
 - **Data:** 2026-11-01
 - **Decisores:** José Victor
 - **Tasks relacionadas:** T0.07, T2.05, T3.05, T4.03, T10.01

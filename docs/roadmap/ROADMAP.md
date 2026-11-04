@@ -61,11 +61,11 @@ flowchart LR
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T2.01 | `Either` (left/right + helpers) + `DomainError` + `common-errors` | F1 | — | ☐ |
-| T2.02 | `UniqueEntityID` (UUIDv7) + `Entity` + `ValueObject` | T2.01 | 0014 | ☐ |
-| T2.03 | `AggregateRoot` + `DomainEvent` + registro/dispatch de domain events | T2.02 | 0009 | ☐ |
-| T2.04 | `WatchedList` | T2.02 | — | ☐ |
-| T2.05 | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (`defineIntegrationEventContract` Zod + tipo) | T2.03 | 0008, 0014, 0019, 0020 | ☐ |
+| [T2.01](./tasks/T2.01-either-domain-error.md) | `Either` (left/right + helpers) + `DomainError` + `common-errors` | F1 | 0026, 0028 | 📝 |
+| [T2.02](./tasks/T2.02-unique-entity-id-entity-value-object.md) | `UniqueEntityID` (UUIDv7) + `Entity` + `ValueObject` | T2.01 | 0014, 0027 | 📝 |
+| [T2.03](./tasks/T2.03-aggregate-root-domain-events.md) | `AggregateRoot` + `DomainEvent` + registro/dispatch de domain events | T2.02 | 0009, 0025 | 📝 |
+| [T2.04](./tasks/T2.04-watched-list.md) | `WatchedList` | T2.02 | — | 📝 |
+| [T2.05](./tasks/T2.05-integration-event-envelope-contract.md) | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (`defineIntegrationEventContract` Zod + tipo) | T2.03 | 0008, 0014, 0019, 0020, 0023, 0024 | 📝 |
 
 ## F3 — `src/shared/infra` (plataforma)
 
@@ -77,7 +77,7 @@ flowchart LR
 | T3.02 | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (RFC 7807), mapeamento `Either` → HTTP | T3.01 | 0013 | ☐ |
 | T3.03 | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves | T3.02 | — | ☐ |
 | T3.04 | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02 | 0003 | ☐ |
-| T3.05 | `PrismaModule` + schema `OutboxEvent` + `PrismaUnitOfWork` (ALS + propagação de `app.current_tenant_id` para RLS) | T3.01 | 0007, 0009, 0017 | ☐ |
+| T3.05 | `PrismaModule` + schema `OutboxEvent` + `PrismaUnitOfWork` (ALS + propagação de `app.current_tenant_id` para RLS) | T3.01 | 0007, 0009, 0017, 0025 | ☐ |
 | T3.06 | `MongoReadModule` + `MongoReadService` + registro/sincronização de índices de views | T3.01 | — | ☐ |
 | T3.07 | `RedisModule` + `CacheGateway` adapter + `DistributedLockService` | T3.01 | — | ☐ |
 | T3.08 | Observabilidade: `nestjs-pino` (Canonical Log Lines, `LogContextPort`, redact, sampling) + OTel `instrumentation.ts` + `/metrics` + `/health/ready` | T3.05–T3.07 | 0006, 0013 | ☐ |
@@ -92,7 +92,7 @@ flowchart LR
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
 | T4.01 | Módulo Kafka: producer/consumer atrás de portas (`EventBusGateway`) | F3 | 0004 | ☐ |
-| T4.02 | Schema Registry: registro/validação/serialização JSON Schema a partir dos contratos Zod (`BACKWARD`) | T4.01, T2.05 | 0004, 0020 | ☐ |
+| T4.02 | Schema Registry: registro/validação/serialização JSON Schema a partir dos contratos Zod (`BACKWARD`) + snapshot de JSON Schema por `(eventName, schemaVersion)` | T4.01, T2.05 | 0004, 0020, 0023 | ☐ |
 | T4.03 | `OutboxRelayWorker` (`LISTEN/NOTIFY` + fallback 60s, entrypoint de worker) + propagação de `traceparent` | T4.01, T3.05 | 0007, 0013 | ☐ |
 | T4.04 | Pipeline de consumo: retry com backoff + DLQ + métricas de lag | T4.01 | 0013 | ☐ |
 | T4.05 | Idempotência: `BaseProjector` (Mongo) + `BaseSubscriber` (`processed_events`) | T4.04 | 0008, 0013 | ☐ |
