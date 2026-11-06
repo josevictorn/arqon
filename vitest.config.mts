@@ -37,6 +37,14 @@ export default defineConfig({
       include: ["src/**/*.ts"],
       provider: "v8",
       reporter: ["text", "lcov"],
+      thresholds: {
+        "src/shared/core/**": {
+          branches: 100,
+          functions: 100,
+          lines: 100,
+          statements: 100,
+        },
+      },
     },
     projects: [
       createProject(

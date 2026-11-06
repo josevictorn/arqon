@@ -1,6 +1,6 @@
 # CI — runs the same checks as the local workflow (docs/workflow.md, DoD).
 #
-#   verify       -> pnpm verify (lint + typecheck + arch:check + test:unit)
+#   verify       -> pnpm verify (lint + typecheck + arch:check + test:cov, 100% in shared/core)
 #   integration  -> compose profile `core` + test:int + test:e2e
 #
 # Integration uses docker-compose.yml instead of `services:` to keep parity

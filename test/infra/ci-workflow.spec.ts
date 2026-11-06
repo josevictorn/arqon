@@ -88,7 +88,7 @@ describe(".github/workflows/ci.yml", () => {
     expect(body).toMatch(TIMEOUT);
   });
 
-  it("verify runs the full local gate (lint, typecheck, arch, unit)", () => {
+  it("verify runs the full local gate (lint, typecheck, arch, cov)", () => {
     expect(verify).toMatch(runs("verify"));
   });
 
