@@ -18,4 +18,4 @@ Base que todo `domain/` importa. Se quebrar aqui, quebra o sistema inteiro.
 
 ## Referência
 - Envelope: [ADR-0019](../../../docs/decisions/0019-envelope-integration-event.md) · Zod fora do core: [ADR-0024](../../../docs/decisions/0024-zod-fora-do-shared-core.md) · IDs: [ADR-0014](../../../docs/decisions/0014-identificadores-uuidv7.md) · Gerador UUIDv7: [ADR-0027](../../../docs/decisions/0027-uuidv7-com-biblioteca-uuid.md) · DomainError: [ADR-0026](../../../docs/decisions/0026-domain-error-nao-estende-error.md) · Cobertura: [ADR-0028](../../../docs/decisions/0028-verify-com-gate-de-cobertura.md).
-- Código de referência: `domain/unique-entity-id.ts` (chega na T2.02) e `either.ts` (T2.01). Até lá, siga a [anatomia](../../../docs/architecture/03-module-anatomy.md).
+- Código de referência: [`logic/either.ts`](./logic/either.ts) e [`errors/domain-error.ts`](./errors/domain-error.ts) (T2.01); `domain/unique-entity-id.ts` chega na T2.02. Até lá, siga a [anatomia](../../../docs/architecture/03-module-anatomy.md).
