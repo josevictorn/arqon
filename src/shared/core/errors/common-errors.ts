@@ -23,6 +23,18 @@ export class NotAllowedError extends DomainError {
   }
 }
 
+/** The value is not a valid UUIDv7 (malformed or another UUID version). */
+export class InvalidUniqueEntityIdError extends DomainError {
+  constructor(value: string) {
+    super({
+      args: { value },
+      code: "COMMON.INVALID_ID",
+      httpStatus: 422,
+      i18nKey: "errors.common.invalid_id",
+    });
+  }
+}
+
 /** Optimistic concurrency conflict: the aggregate version changed since it was read. */
 export class ConcurrencyError extends DomainError {
   constructor(resource: string, id: string) {

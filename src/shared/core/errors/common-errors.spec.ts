@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ConcurrencyError,
+  InvalidUniqueEntityIdError,
   NotAllowedError,
   ResourceNotFoundError,
 } from "./common-errors";
@@ -38,6 +39,18 @@ describe("common errors", () => {
       code: "COMMON.NOT_ALLOWED",
       httpStatus: 403,
       i18nKey: "errors.common.not_allowed",
+    });
+  });
+
+  it("InvalidUniqueEntityIdError is a 422 with the rejected value in args", () => {
+    const error = new InvalidUniqueEntityIdError("abc");
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(fieldsOf(error)).toEqual({
+      args: { value: "abc" },
+      code: "COMMON.INVALID_ID",
+      httpStatus: 422,
+      i18nKey: "errors.common.invalid_id",
     });
   });
 
