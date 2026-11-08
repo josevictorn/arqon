@@ -65,7 +65,7 @@ flowchart LR
 | [T2.02](./tasks/T2.02-unique-entity-id-entity-value-object.md) | `UniqueEntityID` (UUIDv7) + `Entity` + `ValueObject` | T2.01 | 0014, 0027 | ✅ |
 | [T2.03](./tasks/T2.03-aggregate-root-domain-events.md) | `AggregateRoot` + `DomainEvent` + registro/dispatch de domain events | T2.02 | 0009, 0025 | ✅ |
 | [T2.04](./tasks/T2.04-watched-list.md) | `WatchedList` | T2.02 | — | ✅ |
-| [T2.05](./tasks/T2.05-integration-event-envelope-contract.md) | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (`defineIntegrationEventContract` Zod + tipo) | T2.03 | 0008, 0014, 0019, 0020, 0023, 0024 | 👀 |
+| [T2.05](./tasks/T2.05-integration-event-envelope-contract.md) | Envelope `IntegrationEvent` versionado + convenção de tópicos + helper de definição de contrato (`defineIntegrationEventContract` Zod + tipo) | T2.03 | 0008, 0014, 0019, 0020, 0023, 0024 | ✅ |
 
 ## F3 — `src/shared/infra` (plataforma)
 
