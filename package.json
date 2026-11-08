@@ -34,7 +34,8 @@
     "fastify": "5.12.7",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
-    "uuid": "14.0.3"
+    "uuid": "14.0.3",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",

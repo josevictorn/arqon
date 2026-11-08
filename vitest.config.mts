@@ -8,7 +8,7 @@ const alias = {
   "@/integrations": resolve(root, "src/integrations"),
   "@/modules": resolve(root, "src/modules"),
   "@/shared": resolve(root, "src/shared"),
-  "@test": resolve(root, "test"),
+  "@/test": resolve(root, "test"),
 };
 
 const createProject = (

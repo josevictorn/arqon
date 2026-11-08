@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ConcurrencyError,
+  InvalidEventNameError,
   InvalidUniqueEntityIdError,
   NotAllowedError,
   ResourceNotFoundError,
@@ -51,6 +52,18 @@ describe("common errors", () => {
       code: "COMMON.INVALID_ID",
       httpStatus: 422,
       i18nKey: "errors.common.invalid_id",
+    });
+  });
+
+  it("InvalidEventNameError is a 422 with the rejected value in args", () => {
+    const error = new InvalidEventNameError("BillingInvoicePaid");
+
+    expect(error).toBeInstanceOf(DomainError);
+    expect(fieldsOf(error)).toEqual({
+      args: { value: "BillingInvoicePaid" },
+      code: "COMMON.INVALID_EVENT_NAME",
+      httpStatus: 422,
+      i18nKey: "errors.common.invalid_event_name",
     });
   });
 

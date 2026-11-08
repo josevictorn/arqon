@@ -11,6 +11,7 @@
 - `test/setup-{unit,int,e2e}.ts`: setup por nível (isolamento por schema/DB chega na T3.11).
 - `test/fakes/`: Fake Gateways (`FakePaymentGateway`, `FakeStorage`, `FakeEventBus`).
 - `test/factories/`: builders de entidades e read models (dados com `@faker-js/faker`).
+- Importe utilitários de `test/` pelo alias `@/test/*` (ex.: `@/test/factories/...`). **Não** use `@test/*`: o `noUndeclaredDependencies` do Biome lê `@test/x` como pacote npm com escopo e quebra o lint.
 - Unit usa repositórios in-memory (`InMemoryWriteRepositories` / `InMemoryReadRepositories`), nunca Prisma/Mongo.
 - `test/architecture/`: prova das regras do `arch:check` (fixtures violam de propósito).
 - `test/infra/`: guardas de configuração (CI, compose, AGENTS.md).

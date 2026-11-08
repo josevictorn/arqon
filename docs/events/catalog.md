@@ -10,6 +10,35 @@ Fonte única de **quais eventos existem, quem produz e quem consome**. Toda task
 - **Breaking change** → nova versão (`v2`), publicando `v1` e `v2` em paralelo durante a transição.
 - **`schemaVersion`** → revisão compatível dentro do tópico: começa em `1`, sobe `+1` a cada mudança `BACKWARD` compatível (ex.: campo opcional novo) e recomeça em `1` em cada novo `.vN`. Ver [ADR-0023](../decisions/0023-semantica-de-schema-version.md).
 
+## Como declarar um contrato
+
+Cada evento é declarado **uma vez**, em Zod, com `defineIntegrationEventContract` ([`define-integration-event-contract.ts`](../../src/shared/contracts/events/define-integration-event-contract.ts)). O helper deriva `topic`/`dlqTopic`, o schema do envelope completo (base do JSON Schema da T4.02), o `parse` que devolve `Either` e os tipos estáticos:
+
+```ts
+// src/shared/contracts/events/billing/invoice-paid.v1.event.ts
+import { z } from "zod";
+import {
+  defineIntegrationEventContract,
+  type IntegrationEventOf,
+} from "../define-integration-event-contract";
+
+export const invoicePaidV1 = defineIntegrationEventContract({
+  eventName: "billing.invoice.paid.v1", // topic; dlqTopic = "billing.invoice.paid.v1.dlq"
+  schemaVersion: 1, // +1 a cada mudança compatível (ADR-0023)
+  payloadSchema: z.object({
+    invoiceId: z.uuid({ version: "v7" }),
+    amountCents: z.number().int().min(0),
+    paidAt: z.iso.datetime(), // datas sempre como string ISO 8601 (ADR-0020)
+  }),
+});
+
+export type InvoicePaidV1 = IntegrationEventOf<typeof invoicePaidV1>;
+
+// Consumer: invoicePaidV1.parse(message) -> Either<ZodError, InvoicePaidV1>
+```
+
+A definição **lança no carregamento do módulo** se o `eventName` fugir da convenção, se o `schemaVersion` não for inteiro `>= 1` ou se o payload não for conversível para JSON Schema (`z.date()`, `z.bigint()`, `z.map()`, `.transform()`).
+
 ## Eventos
 
 | Tópico | Produtor (Command) | Consumidores | Payload (resumo) | Status |
