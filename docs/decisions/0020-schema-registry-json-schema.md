@@ -2,6 +2,7 @@
 
 - **Status:** Aceito
 - **Data:** 2026-11-01
+- **Atualizado:** 2026-11-08 — errata: a regra 2 passa a citar a API do Zod 4 (`z.iso.datetime()`) no lugar da do Zod 3 (`z.string().datetime()`). A decisão não mudou.
 - **Decisores:** José Victor
 - **Tasks relacionadas:** T0.07, T2.05, T4.02
 - **Docs afetados:** [`docs/architecture/04-cqrs-and-events.md`](../architecture/04-cqrs-and-events.md), [`docs/events/catalog.md`](../events/catalog.md)
@@ -49,6 +50,6 @@ Adotamos a **Opção A**:
 ## Regras para a IA
 
 1. Nunca crie arquivos `.avsc` (Avro) ou `.proto` (Protobuf) para eventos Kafka; defina todos os contratos exclusivamente com Zod via `defineIntegrationEventContract` em `src/shared/contracts/events/`.
-2. Todo campo de data em contratos de `IntegrationEvent` deve ser serializado como string ISO 8601 (`z.string().datetime()`).
+2. Todo campo de data em contratos de `IntegrationEvent` deve ser serializado como string ISO 8601 em UTC, validada com `z.iso.datetime()` (API do Zod 4, que só aceita o sufixo `Z`). Nunca use `z.date()`: o `defineIntegrationEventContract` lança na definição.
 3. Nunca faça *breaking change* em um evento `.v1` já publicado; crie um novo contrato `.v2` se a mudança não for `BACKWARD` compatível.
 

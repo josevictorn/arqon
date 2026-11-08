@@ -20,7 +20,7 @@
       "@/shared/*": ["src/shared/*"],
       "@/modules/*": ["src/modules/*"],
       "@/integrations/*": ["src/integrations/*"],
-      "@test/*": ["test/*"]
+      "@/test/*": ["test/*"]
     }
   }
 }

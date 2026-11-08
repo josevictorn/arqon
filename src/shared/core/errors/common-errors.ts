@@ -35,6 +35,18 @@ export class InvalidUniqueEntityIdError extends DomainError {
   }
 }
 
+/** The Integration Event name does not follow `<context>.<aggregate>.<action>.v<N>`. */
+export class InvalidEventNameError extends DomainError {
+  constructor(value: string) {
+    super({
+      args: { value },
+      code: "COMMON.INVALID_EVENT_NAME",
+      httpStatus: 422,
+      i18nKey: "errors.common.invalid_event_name",
+    });
+  }
+}
+
 /** Optimistic concurrency conflict: the aggregate version changed since it was read. */
 export class ConcurrencyError extends DomainError {
   constructor(resource: string, id: string) {

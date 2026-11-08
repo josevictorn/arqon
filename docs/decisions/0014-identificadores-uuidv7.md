@@ -2,6 +2,7 @@
 
 - **Status:** Aceito
 - **Data:** 2026-11-01
+- **Atualizado:** 2026-11-08 — errata: a regra 3 e a Opção A passam a citar a API do Zod 4 (`z.uuid({ version: "v7" })`) no lugar da do Zod 3 (`z.string().uuid()`). A decisão não mudou.
 - **Decisores:** José Victor
 - **Tasks relacionadas:** T0.03, T2.02, T2.05
 - **Docs afetados:** [`docs/architecture/00-principles.md`](../architecture/00-principles.md), [`docs/modules/iam/spec.md`](../modules/iam/spec.md)
@@ -19,7 +20,7 @@ No DDD, um Aggregate Root precisa ter identidade válida desde o momento de sua 
 ### Opção A — UUIDv7 (RFC 9562) gerado no domínio (`UniqueEntityID`) para tudo
 - ✅ **Ordenável por tempo (k-sortable):** os primeiros 48 bits são um timestamp Unix em milissegundos, eliminando a fragmentação de páginas B-Tree no PostgreSQL e no MongoDB.
 - ✅ **Identidade imediata no domínio:** agregados e eventos já nascem com ID antes do `save()`, viabilizando Domain Events e Outbox na mesma transação sem round-trip extra ao banco.
-- ✅ **Compatibilidade universal:** é um UUID padrão de 128 bits (formato `8-4-4-4-12`), aceito nativamente pela coluna `UUID` do PostgreSQL e por validadores Zod (`z.string().uuid()`).
+- ✅ **Compatibilidade universal:** é um UUID padrão de 128 bits (formato `8-4-4-4-12`), aceito nativamente pela coluna `UUID` do PostgreSQL e por validadores Zod (`z.uuid({ version: "v7" })`).
 - ❌ Revela o timestamp aproximado de criação da entidade se o ID for exposto na URL (aceitável para SaaS B2B; endpoints nunca dependem de obscuridade de ID para segurança).
 
 ### Opção B — UUIDv4 gerado no domínio
@@ -50,4 +51,4 @@ Adotamos a **Opção A**: todos os identificadores de entidades (`UniqueEntityID
 
 1. Todo `Entity`, `AggregateRoot`, `DomainEvent` e `IntegrationEvent` recebe seu ID via `UniqueEntityID` (UUIDv7) na camada de domínio; nunca delegue a geração de ID ao banco de dados.
 2. No Prisma (`schema.prisma`), todas as colunas de ID devem usar o tipo nativo `@db.Uuid`.
-3. Nos contratos HTTP e schemas Zod de parâmetros/DTOs, valide IDs sempre com `z.string().uuid()`.
+3. Nos contratos HTTP e schemas Zod de parâmetros/DTOs, valide IDs sempre com `z.uuid({ version: "v7" })` (API do Zod 4). Não use `z.string().uuid()` (Zod 3) nem `z.uuid()` sem versão: ambos aceitam qualquer versão de UUID.
