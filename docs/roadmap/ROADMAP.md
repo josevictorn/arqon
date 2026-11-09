@@ -71,19 +71,25 @@ flowchart LR
 
 **Saída da fase:** app sobe com config validada, erros i18n em Problem Details, `/docs` (Scalar), Prisma + UoW + Outbox, Mongo, Redis, observabilidade, rate limit e resiliência; infra de testes isolados funcionando.
 
+> Detalhada em 2026-11-08. T3.05 e T3.08 foram quebradas em `a/b/c` para caber em PRs de até ~400 linhas. O isolamento por worker de cada banco nos testes de integração passou para a task que traz o banco (T3.05a, T3.06, T3.07); a T3.11 cuida do e2e, dos fakes e das factories. **ADRs a propor:** 0029 (formato do erro HTTP + `Either` → HTTP), 0030 (contrato do `UnitOfWork`), 0031 (papel de runtime do PostgreSQL para RLS).
+
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| T3.01 | `EnvModule` (Zod), falha rápida no boot | F2 | 0012, 0013 | ☐ |
-| T3.02 | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (RFC 7807), mapeamento `Either` → HTTP | T3.01 | 0013 | ☐ |
-| T3.03 | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves | T3.02 | — | ☐ |
-| T3.04 | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02 | 0003 | ☐ |
-| T3.05 | `PrismaModule` + schema `OutboxEvent` + `PrismaUnitOfWork` (ALS + propagação de `app.current_tenant_id` para RLS) | T3.01 | 0007, 0009, 0017, 0025 | ☐ |
-| T3.06 | `MongoReadModule` + `MongoReadService` + registro/sincronização de índices de views | T3.01 | — | ☐ |
-| T3.07 | `RedisModule` + `CacheGateway` adapter + `DistributedLockService` | T3.01 | — | ☐ |
-| T3.08 | Observabilidade: `nestjs-pino` (Canonical Log Lines, `LogContextPort`, redact, sampling) + OTel `instrumentation.ts` + `/metrics` + `/health/ready` | T3.05–T3.07 | 0006, 0013 | ☐ |
-| T3.09 | Rate limiting distribuído (Redis) por IP / usuário / tier | T3.07 | — | ☐ |
-| T3.10 | `ResilienceModule` + `ResilienceRegistry` (`cockatiel`) + `@Resilient` + métricas/logs de breaker | T3.08 | 0005, 0013 | ☐ |
-| T3.11 | Infra de testes: schema PG / DB Mongo isolados por worker, limpeza do Redis, base de factories e fakes | T3.05–T3.07 | 0011 | ☐ |
+| [T3.01](./tasks/T3.01-env-module.md) | `EnvModule` (Zod), falha rápida no boot | F2 | 0003, 0012, 0013 | 📝 |
+| [T3.02](./tasks/T3.02-http-layer-problem-details.md) | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (Problem Details), mapeamento `Either` → HTTP + `src/shared/infra/AGENTS.md` | T3.01 | 0013, 0026, **0029 ⏳** | ⛔ |
+| [T3.03](./tasks/T3.03-i18n.md) | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves e placeholders | T3.02 | — | 📝 |
+| [T3.04](./tasks/T3.04-zod-validation-openapi-scalar.md) | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02, T3.03 | 0003, 0012, 0014 | 📝 |
+| [T3.05a](./tasks/T3.05a-prisma-module-outbox-schema.md) | `PrismaModule` (Prisma 7) + schema `outbox_events` + papel de runtime sem `BYPASSRLS` + schema PG isolado por worker (int) | T3.01 | 0003, 0007, 0014, 0017, **0031 ⏳** | ⛔ |
+| [T3.05b](./tasks/T3.05b-request-context-als.md) | `RequestContext` (`AsyncLocalStorage`) + `x-correlation-id` por requisição | T3.02 | 0009, 0013, 0016, 0019 | 📝 |
+| [T3.05c](./tasks/T3.05c-prisma-unit-of-work.md) | `UnitOfWork` + `PrismaUnitOfWork` (ALS do `tx`, dispatch de Domain Events, Outbox + `pg_notify`, `app.current_tenant_id` para RLS) | T3.05a, T3.05b | 0007, 0009, 0017, 0019, 0023, 0025, **0030 ⏳** | ⛔ |
+| [T3.06](./tasks/T3.06-mongo-read-module.md) | `MongoReadModule` + `MongoReadService` + registro/sincronização de índices de views + DB Mongo isolado por worker (int) | T3.01 | 0003, 0011 | 📝 |
+| [T3.07](./tasks/T3.07-redis-cache-lock.md) | `RedisModule` + `CacheGateway` adapter + `DistributedLockService` + prefixo Redis isolado por worker (int) | T3.01 | 0003, 0012, 0016 | 📝 |
+| [T3.08a](./tasks/T3.08a-canonical-logging.md) | Logging: `nestjs-pino`, Canonical Log Line HTTP, `LoggerPort` / `LogContextPort`, redact, sampling e logs de ciclo de vida | T3.02, T3.05b | 0006, 0013 | 📝 |
+| [T3.08b](./tasks/T3.08b-opentelemetry-tracing.md) | OTel `instrumentation.ts` (HTTP, Nest, Prisma, Mongo, Redis) + `traceId`/`spanId` nos logs | T3.08a, T3.05a, T3.06, T3.07 | 0006, 0012, 0013 | 📝 |
+| [T3.08c](./tasks/T3.08c-metrics-health-ready.md) | `/metrics` (`prom-client`) + `/health/ready` (PostgreSQL, MongoDB, Redis) | T3.05a, T3.06, T3.07, T3.08a | 0006, 0013 | 📝 |
+| [T3.09](./tasks/T3.09-distributed-rate-limiting.md) | Rate limiting distribuído (Redis) por IP / usuário / organização (`OrganizationRateLimitPolicy`) | T3.07, T3.03 | 0013, 0016, 0018 | 📝 |
+| [T3.10](./tasks/T3.10-resilience-module.md) | `ResilienceModule` + `ResilienceRegistry` (`cockatiel`) + `@Resilient` + métricas/logs de breaker + `503` | T3.08a, T3.08c | 0005, 0013 | 📝 |
+| [T3.11](./tasks/T3.11-test-infrastructure.md) | Infra de testes: e2e isolado por arquivo, `createTestApp`, fakes (`FakeUnitOfWork`, cache, lock) com testes de contrato e base de factories | T3.05c, T3.06, T3.07 | 0009, 0011, 0025 | 📝 |
 
 ## F4 — Mensageria, Outbox e BaseProjector
 
@@ -93,7 +99,7 @@ flowchart LR
 |---|---|---|---|---|
 | T4.01 | Módulo Kafka: producer/consumer atrás de portas (`EventBusGateway`) | F3 | 0004 | ☐ |
 | T4.02 | Schema Registry: registro/validação/serialização JSON Schema a partir dos contratos Zod (`BACKWARD`) + snapshot de JSON Schema por `(eventName, schemaVersion)` | T4.01, T2.05 | 0004, 0020, 0023 | ☐ |
-| T4.03 | `OutboxRelayWorker` (`LISTEN/NOTIFY` + fallback 60s, entrypoint de worker) + propagação de `traceparent` | T4.01, T3.05 | 0007, 0013 | ☐ |
+| T4.03 | `OutboxRelayWorker` (`LISTEN/NOTIFY` + fallback 60s, entrypoint de worker) + propagação de `traceparent` | T4.01, T3.05c | 0007, 0013 | ☐ |
 | T4.04 | Pipeline de consumo: retry com backoff + DLQ + métricas de lag | T4.01 | 0013 | ☐ |
 | T4.05 | Idempotência: `BaseProjector` (Mongo) + `BaseSubscriber` (`processed_events`) | T4.04 | 0008, 0013 | ☐ |
 | T4.06 | Teste e2e do pipeline CQRS completo com um módulo `_example` descartável | T4.02–T4.05 | — | ☐ |
