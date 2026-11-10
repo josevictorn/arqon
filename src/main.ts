@@ -4,19 +4,25 @@ import {
   FastifyAdapter,
   type NestFastifyApplication,
 } from "@nestjs/platform-fastify";
+import { EnvService } from "@/shared/infra/config/env.service";
+import { formatEnvInvalidLine, loadEnv } from "@/shared/infra/config/load-env";
 import { AppModule } from "./app.module";
 
-const DEFAULT_PORT = 3000;
-
 async function bootstrap(): Promise<void> {
+  const env = loadEnv();
+  if (env.isLeft()) {
+    process.stderr.write(formatEnvInvalidLine(env.value));
+    process.exitCode = 1;
+    return;
+  }
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter()
   );
   app.enableShutdownHooks();
 
-  const port = Number(process.env.PORT ?? DEFAULT_PORT);
-  await app.listen(port, "0.0.0.0");
+  await app.listen(app.get(EnvService).get("PORT"), "0.0.0.0");
 }
 
 bootstrap().catch((error: unknown) => {

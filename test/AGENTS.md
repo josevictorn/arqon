@@ -16,6 +16,8 @@
 - `test/architecture/`: prova das regras do `arch:check` (fixtures violam de propósito).
 - `test/infra/`: guardas de configuração (CI, compose, AGENTS.md).
 - `test/scripts/`: roda os `scripts/*.ts` reais com `node` numa cópia do repo em `os.tmpdir()` (nunca na working tree).
+  O `bootstrap-env.spec.ts` compila `src/` com o SWC do projeto em `os.tmpdir()` e roda o `main.js` real (pacotes via `NODE_PATH`).
+- `test/setup-{int,e2e}.ts`: `NODE_ENV=test` e `LOG_LEVEL=silent` como defaults, depois `.env` e `.env.example` (sem sobrescrever o ambiente). Unit não lê `.env`: use `vi.stubEnv`.
 
 ## Obrigatórios
 - **Anti-vazamento cross-tenant:** todo repositório/query de dado de tenant tem teste que cria dados em 2 organizações e prova que A não lê nem altera B (int, com RLS ativo).
