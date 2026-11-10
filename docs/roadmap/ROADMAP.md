@@ -75,7 +75,7 @@ flowchart LR
 
 | ID | Task | Depende de | ADRs | Status |
 |---|---|---|---|---|
-| [T3.01](./tasks/T3.01-env-module.md) | `EnvModule` (Zod), falha rápida no boot | F2 | 0003, 0012, 0013 | 👀 |
+| [T3.01](./tasks/T3.01-env-module.md) | `EnvModule` (Zod), falha rápida no boot | F2 | 0003, 0012, 0013 | ✅ |
 | [T3.02](./tasks/T3.02-http-layer-problem-details.md) | Camada HTTP: Fastify, Helmet, CORS, `GlobalDomainExceptionFilter` (Problem Details), mapeamento `Either` → HTTP + `src/shared/infra/AGENTS.md` | T3.01 | 0013, 0026, **0029 ⏳** | ⛔ |
 | [T3.03](./tasks/T3.03-i18n.md) | i18n (`en`, `pt-BR`) integrado ao filtro + teste que garante paridade de chaves e placeholders | T3.02 | — | 📝 |
 | [T3.04](./tasks/T3.04-zod-validation-openapi-scalar.md) | Validação Zod (`nestjs-zod`) + OpenAPI + Scalar em `/docs` | T3.02, T3.03 | 0003, 0012, 0014 | 📝 |
