@@ -81,7 +81,7 @@ services:
   #   - host clients:      localhost:${KAFKA_PORT}  (external listener)
   #   - other containers:  redpanda:29092           (internal listener)
   redpanda:
-    image: redpandadata/redpanda:v26.2.6
+    image: redpandadata/redpanda:v26.2.7
     profiles: [ messaging, full ]
     restart: unless-stopped
     command:
@@ -113,7 +113,7 @@ services:
       start_period: 10s
 
   redpanda-console:
-    image: redpandadata/console:v3.13.1
+    image: redpandadata/console:v3.14.0
     profiles: [ messaging, full ]
     restart: unless-stopped
     environment:
@@ -141,7 +141,7 @@ services:
 
   # ─── mail-storage ────────────────────────────────────────────────────────
   mailpit:
-    image: axllent/mailpit:v1.33.0
+    image: axllent/mailpit:v1.33.1
     profiles: [ mail-storage, full ]
     restart: unless-stopped
     environment:
@@ -160,7 +160,7 @@ services:
 
   # S3-compatible object storage (replaces MinIO — ADR-0021).
   rustfs:
-    image: rustfs/rustfs:1.0.4
+    image: rustfs/rustfs:1.0.6
     profiles: [ mail-storage, full ]
     restart: unless-stopped
     environment:
@@ -189,7 +189,7 @@ services:
   # ─── observability ───────────────────────────────────────────────────────
   # OTel Collector + Loki + Tempo + Prometheus + Grafana (ADR-0006).
   otel-lgtm:
-    image: grafana/otel-lgtm:0.39.0
+    image: grafana/otel-lgtm:0.41.0
     profiles: [ observability, full ]
     restart: unless-stopped
     environment:
